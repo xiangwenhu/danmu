@@ -15,7 +15,5 @@ export function enqueue(data: any[]) {
 }
 
 export function startListen(cb: (data: any[]) => void) {
-    requestAnimationFrame(() => {
-        dequeueWithCallback(cb);      
-    });
+    dequeueWithCallback(cb);
 }
