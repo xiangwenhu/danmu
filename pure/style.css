@@ -1,0 +1,114 @@
+html, body {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.danmu-frame {
+    contain: layout;
+    height: 100%;
+    width: 75%;
+    position: absolute;
+    left: 100%;
+    will-change: transform;
+}
+
+.danmu-item {
+    position: absolute;
+    border: 1px solid black;
+    display: inline-block;
+    border-radius: 2px;
+    padding: 3px 0 0;
+    color: #fff;
+    font-family: SimHei, SimSun, Heiti, MS Mincho, Meiryo, Microsoft YaHei, monospace;
+    font-size: 24px;
+    text-decoration: none;
+    text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
+    line-height: 100%;
+    letter-spacing: 0;
+    word-break: keep-all;
+    white-space: pre;
+    margin: 3px;
+    padding: 6px;
+}
+
+.danmu-ani {
+    animation: ani-1 10s linear 0ms;
+    animation-fill-mode: forwards;
+    z-index: 11;
+}
+
+.danmu-ani2 {
+    animation: ani-2 10s linear 0ms;
+    animation-fill-mode: forwards;
+    z-index: 10;
+}
+
+.danmu-ani3 {
+    animation: ani-3 10s linear 0ms;
+    animation-fill-mode: forwards;
+    z-index: 9
+}
+
+/* .animated .danmu-item {
+    display: none;
+} */
+
+/* .danmu-ani .show {
+    display: block;
+} */
+
+@keyframes ani-1 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
+
+@keyframes ani-2 {
+    from {
+        transform: translate3d(-100%, 0, 0);
+    }
+    to {
+        transform: translate3d(-200%, 0, 0);
+    }
+}
+
+@keyframes ani-3 {
+    from {
+        transform: translate3d(-200%, 0, 0);
+    }
+    to {
+        transform: translate3d(-300%, 0, 0);
+    }
+}
+
+.dis-block {
+    display: block;
+}
+
+.hide {
+    display: none;
+    /* opacity: 0 */
+}
+
+video {
+    width: 1349px;
+    height: 758px;
+}
+
+.pos {
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1349px;
+    height: 758px;
+    z-index: 999
+}

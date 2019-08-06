@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>弹幕测试</title>
+    <link href="./style.css" rel="stylesheet" />
+</head>
+
+<body>
+
+
+    <div style="position: relative; left:200px; top:10px; width: 1349px; overflow-x: hidden">
+        <video autoplay loop controls muted
+            src="http://45.252.224.75/mp4files/910000000DD6ED95/clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"></video>
+
+
+        <div class="pos">
+            <div id="danmu1" class="danmu-frame"></div>
+            <div id="danmu2" class="danmu-frame"></div>
+            <div id="danmu3" class="danmu-frame"></div>
+        </div>
+    </div>
+
+
+    <div style="text-align: center">
+        <div style="text-align: left; width:800px; margin: auto;">
+            <p>测试弹幕：（当前弹幕数量）<span id="danmuNumer"></span> (frame1:<span id="frame1Number"></span>,frame2:<span
+                    id="frame2Number"></span>,frame3:<span id="frame3Number"></span>) </p>
+            <div>
+                数量 <input type="number" id="danmuCount" value="20" />
+                <button id="btnStart" type="button">开始</button>
+                <button id="btnStop" type="button">结束</button>
+            </div>
+        </div>
+        <div style="text-align: left; width:500px; margin: auto;">
+            <div>
+                弹幕 <input type="text" id="danmuText" style="width: 600px" maxlength="140" />
+                <button id="btnSend" type="button">发送</button>
+            </div>
+        </div>
+
+
+
+        <div class="danmu-item" id="demo_sample"></div>
+    </div>
+
+
+
+    <script src="./main.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+html, body {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+video {
+    width: 1349px;
+    height: 758px;
+}

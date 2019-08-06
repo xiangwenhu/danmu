@@ -1,0 +1,106 @@
+.slide-danmu {
+    position: absolute;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.slide-danmu .danmu-frame {
+    contain: layout;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 100%;
+    will-change: transform;
+}
+
+.slide-danmu .danmu-frame:nth-child(1) {
+    z-index: 11;
+}
+
+.slide-danmu .danmu-frame:nth-child(2) {
+    z-index: 10;
+}
+
+.slide-danmu .danmu-frame:nth-child(3) {
+    z-index: 9;
+}
+
+.slide-danmu .danmu-item {
+    position: absolute;
+    border: 1px solid black;
+    display: inline-block;
+    border-radius: 2px;
+    padding: 3px 0 0;
+    color: #fff;
+    font-size: 24px;
+    text-decoration: none;
+    text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
+    line-height: 100%;
+    letter-spacing: 0;
+    word-break: keep-all;
+    white-space: pre;
+    margin: 3px;
+    padding: 6px;
+}
+
+.slide-danmu .danmu-animation-1 {
+    animation: animation-stage-1 10s linear 0ms;
+    animation-fill-mode: forwards;
+}
+
+.slide-danmu .danmu-animation-2 {
+    animation: animation-stage-2 10s linear 0ms;
+    animation-fill-mode: forwards;
+}
+
+.slide-danmu .danmu-animation-3 {
+    animation: animation-stage-3 5s linear 0ms;
+    animation-fill-mode: forwards;
+}
+
+
+.slide-danmu .danmu-animation-4 {
+    animation: animation-stage-4 5s linear 0ms;
+    animation-fill-mode: forwards;
+}
+
+@keyframes animation-stage-1 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
+
+@keyframes animation-stage-2 {
+    from {
+        transform: translate3d(-100%, 0, 0);
+    }
+    to {
+        transform: translate3d(-200%, 0, 0);
+    }
+}
+
+@keyframes animation-stage-3 {
+    from {
+        transform: translate3d(-200%, 0, 0);
+    }
+    to {
+        transform: translate3d(-250%, 0, 0);
+    }
+}
+
+@keyframes animation-stage-4 {
+    from {
+        transform: translate3d(-250%, 0, 0);
+    }
+    to {
+        transform: translate3d(-300%, 0, 0);
+    }
+}
+
+
+.slide-danmu .hide {
+    display: none;
+}
