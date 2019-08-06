@@ -5,7 +5,6 @@ class Factory {
     private wrapper: HTMLDivElement;
     private frame1: HTMLDivElement;
     private frame2: HTMLDivElement;
-    private frame3: HTMLDivElement;
     private sample: HTMLDivElement;
     private HEIGHT: number;
     private WIDTH: number;
@@ -25,6 +24,7 @@ class Factory {
         parentEl.appendChild(wrapper);
 
         this.createFrames(wrapper);
+        this.periodClear();
     }
 
     setPosition(videoElement: HTMLElement, wrapper: HTMLElement) {
@@ -90,16 +90,12 @@ class Factory {
         frame1.id = "frames_frame1";
         const frame2 = frame1.cloneNode() as HTMLDivElement;
         frame2.id = "frames_frame2";
-        const frame3 = frame1.cloneNode() as HTMLDivElement;
-        frame3.id = "frames_frame3";
 
         wrapper.appendChild(frame1);
         wrapper.appendChild(frame2);
-        wrapper.appendChild(frame3);
 
         this.frame1 = frame1;
         this.frame2 = frame2;
-        this.frame3 = frame3;
 
         this.resgisterAnimationEvents();
 
@@ -117,6 +113,27 @@ class Factory {
         return el;
     }
 
+    periodClear() {
+        setInterval(() => {
+            const frame = document.querySelector(".danmu-animation-2");
+            if (!frame) {
+                return;
+            }
+            console.time("periodClear");
+            const allItems = frame.querySelectorAll(".danmu-item:not(.hide)");
+            const notInViewItems = Array.from(allItems)
+                .slice(0, 200)
+                .filter(function(item) {
+                    const rect = item.getBoundingClientRect();
+                    const b = rect.left + rect.width > 200 && rect.left < 1549;
+                    return !b;
+                });
+            notInViewItems.forEach(child => child.classList.add(".hide"));
+            console.log("cleared Items:", notInViewItems.length);
+            console.timeEnd("periodClear");
+        }, 1000);
+    }
+
     getNewTopLeft(left: number, top?: number) {
         return {
             top: top || ~~(Math.random() * this.HEIGHT),
@@ -130,7 +147,7 @@ class Factory {
     }
 
     resgisterAnimationEvents() {
-        const { frame1, frame2, frame3, clearDanmus } = this;
+        const { frame1, frame2, clearDanmus } = this;
 
         this.frame1.addEventListener("animationend", (ev: AnimationEvent) => {
             switch (ev.animationName) {
@@ -140,16 +157,8 @@ class Factory {
                     frame2.classList.add("danmu-animation-1");
                     break;
                 case "animation-stage-2":
+                    this.clearDanmus(frame1);
                     frame1.classList.remove("danmu-animation-2");
-                    frame1.classList.add("danmu-animation-3");
-                    break;
-                case "animation-stage-3":
-                    clearDanmus(frame1);
-                    frame1.classList.remove("danmu-animation-3");
-                    frame1.classList.add("danmu-animation-4");
-                    break;
-                case "animation-stage-4":
-                    frame1.classList.remove("danmu-animation-4");
                     break;
                 default:
                     break;
@@ -161,43 +170,11 @@ class Factory {
                 case "animation-stage-1":
                     frame2.classList.remove("danmu-animation-1");
                     frame2.classList.add("danmu-animation-2");
-                    frame3.classList.add("danmu-animation-1");
-                    break;
-                case "animation-stage-2":
-                    frame2.classList.remove("danmu-animation-2");
-                    frame2.classList.add("danmu-animation-3");
-                    break;
-                case "animation-stage-3":
-                    clearDanmus(frame2);
-                    frame2.classList.remove("danmu-animation-3");
-                    frame2.classList.add("danmu-animation-4");
-                    break;
-                case "animation-stage-4":
-                    frame2.classList.remove("danmu-animation-4");
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        frame3.addEventListener("animationend", (ev: AnimationEvent) => {
-            switch (ev.animationName) {
-                case "animation-stage-1":
-                    frame3.classList.remove("danmu-animation-1");
-                    frame3.classList.add("danmu-animation-2");
                     frame1.classList.add("danmu-animation-1");
                     break;
                 case "animation-stage-2":
-                    frame3.classList.remove("danmu-animation-2");
-                    frame3.classList.add("danmu-animation-3");
-                    break;
-                case "animation-stage-3":
-                    clearDanmus(frame3);
-                    frame3.classList.remove("danmu-animation-3");
-                    frame3.classList.add("danmu-animation-4");
-                    break;
-                case "animation-stage-4":
-                    frame3.classList.remove("danmu-animation-4");
+                    this.clearDanmus(frame2);
+                    frame2.classList.remove("danmu-animation-2");
                     break;
                 default:
                     break;

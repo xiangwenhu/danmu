@@ -16,8 +16,14 @@ function startBatch() {
 
     manager.sendDanmu(["随机的弹幕哦" + Math.random()]);
     setInterval(function() {
-        manager.sendDanmu(["随机的弹幕哦" + Math.random(), "随机的弹幕哦" + Math.random(),"随机的弹幕哦" + Math.random(), "随机的弹幕哦" + Math.random()]);
-    }, 8);
+        manager.sendDanmu([
+            "随机的弹幕哦随机的弹幕哦" + Math.random(),
+            "随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦" + Math.random(),
+            "随机的弹幕哦随机的弹幕哦弹幕哦" + Math.random(),
+            // "随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦" + Math.random(),
+            // "随机的弹幕哦随机的弹哦随机的弹幕哦" + Math.random()
+        ]);
+    }, 25);
 }
 
 (function() {
