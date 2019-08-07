@@ -36,8 +36,9 @@
     letter-spacing: 0;
     word-break: keep-all;
     white-space: pre;
-    margin: 3px;
-    padding: 6px;
+    margin: 0.2rem;
+    padding: 0.2rem;
+    height: 1.5rem;
 }
 
 .slide-danmu .danmu-animation-1 {

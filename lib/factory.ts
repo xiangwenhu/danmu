@@ -203,9 +203,12 @@ class Factory {
                     frame1.classList.remove("danmu-animation-1");
                     frame1.classList.add("danmu-animation-2");
                     frame2.classList.add("danmu-animation-1");
+
+                    frame1.style.zIndex = "11";
+                    frame2.style.zIndex = "10";
                     break;
                 case "animation-stage-2":
-                    this.clearDanmus(frame1);
+                    this.clearDanmus(frame1);          
                     frame1.classList.remove("danmu-animation-2");
                     break;
                 default:
@@ -220,6 +223,9 @@ class Factory {
                     frame2.classList.remove("danmu-animation-1");
                     frame2.classList.add("danmu-animation-2");
                     frame1.classList.add("danmu-animation-1");
+
+                    frame2.style.zIndex = "11";
+                    frame1.style.zIndex = "10";
                     break;
                 case "animation-stage-2":
                     this.clearDanmus(frame2);
