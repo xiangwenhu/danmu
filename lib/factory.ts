@@ -23,6 +23,8 @@ class Factory {
     private rect: ClientRect;
     private option: FactoryOption;
     private clearTicket: number;
+    private pausedTime: number;
+    private status: number;
 
     constructor(container: HTMLElement) {
         this.wrapper = container;
@@ -40,8 +42,14 @@ class Factory {
     }
 
     start() {
+        if (this.frame1.classList.contains("danmu-animation-1")) {
+            console.log("已经开始。。。。。。");
+            return;
+        }
+
         this.frame1.classList.add("danmu-animation-1");
         this.animatingTime = Date.now();
+        this.status = 1;
     }
 
     stop() {
@@ -54,6 +62,7 @@ class Factory {
             this.frame1.classList.remove("danmu-animation-1", "danmu-animation-2");
             this.frame1.innerHTML = "";
         }
+        this.status = 0;
     }
 
     pause() {
@@ -65,9 +74,11 @@ class Factory {
             return;
         }
         this.frame2.style.animationPlayState = "paused";
+        this.pausedTime = Date.now();
+        this.status = 3;
     }
 
-    continue(){
+    continue() {
         if (!this.frame1) {
             return;
         }
@@ -75,7 +86,10 @@ class Factory {
         if (!this.frame2) {
             return;
         }
-        this.frame2.style.animationPlayState = "running";  
+        this.frame2.style.animationPlayState = "running";
+        this.animatingTime += Date.now() - this.pausedTime;
+        this.pausedTime = 0;
+        this.status = 1;
     }
 
     sendDanmu(queue: any[]) {
@@ -208,7 +222,7 @@ class Factory {
                     frame2.style.zIndex = "10";
                     break;
                 case "animation-stage-2":
-                    this.clearDanmus(frame1);          
+                    this.clearDanmus(frame1);
                     frame1.classList.remove("danmu-animation-2");
                     break;
                 default:

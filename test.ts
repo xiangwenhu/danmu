@@ -7,35 +7,66 @@ videoEl.oncanplay = function() {
         isPlayed = true;
     }
 };
-
-var manager: DanmuManager | null = null;
-
 const containerEl = document.getElementById("container");
+var manager: DanmuManager | null = null;
+manager = getManager(containerEl);
+(window as any).manager = manager;
+manager.init();
+manager.start();
+let ticket = 0;
 function startBatch() {
-    manager = getManager(containerEl);
-    (window as any).manager = manager;
-    manager.init();
-    manager.start();
     manager.sendDanmu(["随机的弹幕哦" + Math.random()]);
-    setInterval(function() {
+    ticket = setInterval(function() {
         manager.sendDanmu([
-
-            "<img height='100%' src='//img1.cache.jj.cn/myjj/my.cl/pc_live/m_resource/week5/1.png'>随机的弹幕哦随机的弹幕哦" + Math.random(),
-            "随机的弹幕哦随机的弹幕哦随机的" +
+            "<img height='100%' src='//img1.cache.jj.cn/myjj/my.cl/pc_live/m_resource/week5/1.png'>随机的弹幕哦随机的弹幕哦" +
                 Math.random(),
+            "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
             // "哦" + Math.random(),
             "666-8888888" + Math.random(),
             "<span style='color:red'>真美</span"
         ]);
-    }, 1000);
+    }, 40);
 }
 
-startBatch();
+let isBigTest = false;
 const txtDanmuEl: HTMLInputElement = document.getElementById("txtDanmu") as HTMLInputElement;
 document.getElementById("btnSend").addEventListener("click", () => {
-    manager && manager.sendDanmu(txtDanmuEl.value);
+    manager.sendDanmu(txtDanmuEl.value);
 });
 
+document.getElementById("btnPause").addEventListener("click", () => {
+    if (isBigTest) {
+        clearInterval(ticket);
+    }
+    manager.pause();
+});
+
+document.getElementById("btnContiue").addEventListener("click", () => {
+    if(isBigTest){
+        startBatch();
+    }
+    manager.continue();
+});
+
+document.getElementById("btnStart").addEventListener("click", () => {
+    manager.start();
+});
+
+document.getElementById("btnStop").addEventListener("click", () => {
+    manager.stop();
+    clearInterval(ticket);
+    isBigTest = false;
+});
+
+document.getElementById("btnBigTest").addEventListener("click", () => {
+    if (isBigTest) {
+        return;
+    }
+    clearInterval(ticket);
+    manager.start();
+    startBatch();
+    isBigTest = true;
+});
 (function() {
     var script = document.createElement("script");
     script.onload = function() {
