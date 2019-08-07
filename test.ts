@@ -5,27 +5,35 @@ let isPlayed = false;
 videoEl.oncanplay = function() {
     if (!isPlayed) {
         isPlayed = true;
-        startBatch();
     }
 };
 
+var manager: DanmuManager | null = null;
+
 const containerEl = document.getElementById("container");
 function startBatch() {
-    let manager: DanmuManager | null = null;
-
     manager = getManager(containerEl);
-
+    (window as any).manager = manager;
+    manager.init();
+    manager.start();
     manager.sendDanmu(["随机的弹幕哦" + Math.random()]);
     setInterval(function() {
         manager.sendDanmu([
             "随机的弹幕哦随机的弹幕哦" + Math.random(),
-            "随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦-随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦" + Math.random(),
-            // "随机的弹幕哦随机的弹幕哦弹幕哦" + Math.random(),
-            // "随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦" + Math.random(),
-            // "随机的弹幕哦随机的弹哦随机的弹幕哦" + Math.random()
+            "随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦-随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦" +
+                Math.random(),
+            // "哦" + Math.random(),
+            "666-8888888" + Math.random(),
+            "真美"
         ]);
-    }, 5000);
+    }, 35);
 }
+
+startBatch();
+const txtDanmuEl: HTMLInputElement = document.getElementById("txtDanmu") as HTMLInputElement;
+document.getElementById("btnSend").addEventListener("click", () => {
+    manager && manager.sendDanmu(txtDanmuEl.value);
+});
 
 (function() {
     var script = document.createElement("script");
@@ -41,16 +49,26 @@ function startBatch() {
     document.head.appendChild(script);
 })();
 
-// setInterval(function() {
-//     const allItems = document.querySelectorAll(".danmu-item");
-//     const len = allItems.length;
+const lbTotal = document.getElementById("lbTotal");
+const lbHide = document.getElementById("lbHide");
+const lbInView = document.getElementById("lbInView");
 
-//     const inViewLen = Array.from(allItems).filter(function(item) {
-//         const rect = item.getBoundingClientRect();
-//         const b =
-//             !item.classList.contains("hide") && rect.left + rect.width > 200 && rect.left < 1549;
-//         return b;
-//     }).length;
+const rect = containerEl.getBoundingClientRect();
+const { left, width } = rect;
+const right = left + width;
+setInterval(function() {
+    (window as any).requestIdleCallback(() => {
+        const allItems = Array.from(document.querySelectorAll(".danmu-item"));
+        const len = allItems.length;
+        const inHideLen = allItems.filter(item => item.classList.contains("hide")).length;
+        const inViewLen = allItems.filter(function(item) {
+            const rect = item.getBoundingClientRect();
+            const b = !item.classList.contains("hide") && rect.left + rect.width >= left;
+            return b;
+        }).length;
 
-//     console.log("total:", len, "  in view:", inViewLen);
-// }, 5000);
+        lbTotal.innerText = len + "";
+        lbHide.innerHTML = inHideLen + "";
+        lbInView.innerHTML = inViewLen + "";
+    });
+}, 5000);
