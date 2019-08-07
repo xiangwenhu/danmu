@@ -3,8 +3,8 @@ import { enqueue, startListen } from "./queue";
 
 export class DanmuManager {
     private factory: Factory;
-    constructor(videoElement: HTMLVideoElement) {
-        this.factory = new Factory(videoElement);
+    constructor(container: HTMLElement) {
+        this.factory = new Factory(container);
         this.factory.init();
         startListen(this.batch.bind(this));
     }
@@ -19,8 +19,8 @@ export class DanmuManager {
     }
 }
 
-function getDanmuManager(videoElement: HTMLVideoElement): DanmuManager {
-    return new DanmuManager(videoElement);
+function getDanmuManager(container: HTMLElement): DanmuManager {
+    return new DanmuManager(container);
 }
 
 export default getDanmuManager;

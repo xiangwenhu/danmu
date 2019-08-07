@@ -9,21 +9,22 @@ videoEl.oncanplay = function() {
     }
 };
 
+const containerEl = document.getElementById("container");
 function startBatch() {
     let manager: DanmuManager | null = null;
 
-    manager = getManager(videoEl);
+    manager = getManager(containerEl);
 
     manager.sendDanmu(["随机的弹幕哦" + Math.random()]);
     setInterval(function() {
         manager.sendDanmu([
             "随机的弹幕哦随机的弹幕哦" + Math.random(),
-            "随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦" + Math.random(),
-            "随机的弹幕哦随机的弹幕哦弹幕哦" + Math.random(),
+            "随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦-随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦" + Math.random(),
+            // "随机的弹幕哦随机的弹幕哦弹幕哦" + Math.random(),
             // "随机的弹幕哦随机的弹幕哦随机的弹幕哦随机的弹幕哦" + Math.random(),
             // "随机的弹幕哦随机的弹哦随机的弹幕哦" + Math.random()
         ]);
-    }, 25);
+    }, 5000);
 }
 
 (function() {
