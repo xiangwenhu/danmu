@@ -25,5 +25,3 @@ export function get2DTranslate(el) {
         y: +tsl[5].trim()
     };
 }
-
-export function get

@@ -26,3 +26,11 @@
 * 预处理
 
 * resize
+
+
+走过的路：
+
+1.  三个frame走
+2.  getComputedStyle获取当前位移
+3.  iframe作为容器
+4.  translate代替弹幕元素的left,top

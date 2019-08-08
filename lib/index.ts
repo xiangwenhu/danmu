@@ -13,6 +13,9 @@ export class DanmuManager {
     }
 
     sendDanmu(text: string | string[]) {
+        if (this.factory.status !== 1) {
+            return;
+        }
         const contents = Array.isArray(text) ? text : [text];
         enqueue(contents);
     }
@@ -31,11 +34,11 @@ export class DanmuManager {
         removeListener(this.batch);
     }
 
-    pause(){
+    pause() {
         this.factory.pause();
     }
 
-    continue(){
+    continue() {
         this.factory.continue();
     }
 }

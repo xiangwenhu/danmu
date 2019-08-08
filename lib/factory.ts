@@ -1,14 +1,14 @@
-// import { get2DTranslate } from "./util";
+import { get2DTranslate } from "./util";
 
 export interface FactoryOption {
-    reuse: boolean;
-    duration: number;
-    checkPeriod: number;
+    reuse?: boolean;
+    duration?: number;
+    checkPeriod?: number;
 }
 
 const DEFAULT_OPTION = {
     reuse: false,
-    duration: 20000,
+    duration: 10000,
     checkPeriod: 1000
 };
 
@@ -24,7 +24,7 @@ class Factory {
     private option: FactoryOption;
     private clearTicket: number;
     private pausedTime: number;
-    private status: number;
+    public status: number;
 
     constructor(container: HTMLElement) {
         this.wrapper = container;
@@ -36,7 +36,7 @@ class Factory {
     }
 
     init(option: FactoryOption = DEFAULT_OPTION) {
-        this.option = option;
+        this.option = Object.assign(DEFAULT_OPTION, option);
         this.createFrames(this.wrapper);
         this.periodClear();
     }
@@ -53,16 +53,20 @@ class Factory {
     }
 
     stop() {
+        this.status = 0;
         this.clearTicket && clearInterval(this.clearTicket);
         if (this.frame1) {
             this.frame1.classList.remove("danmu-animation-1", "danmu-animation-2");
             this.frame1.innerHTML = "";
+            // 复位
+            this.frame1.getBoundingClientRect();
         }
         if (this.frame2) {
-            this.frame1.classList.remove("danmu-animation-1", "danmu-animation-2");
-            this.frame1.innerHTML = "";
+            this.frame2.classList.remove("danmu-animation-1", "danmu-animation-2");
+            this.frame2.innerHTML = "";
+            // 复位
+            this.frame2.getBoundingClientRect();
         }
-        this.status = 0;
     }
 
     pause() {
@@ -93,6 +97,10 @@ class Factory {
     }
 
     sendDanmu(queue: any[]) {
+        if (this.status !== 1) {
+            return;
+        }
+
         const el = document.querySelector(".danmu-animation-1");
         if (!el) {
             return;
@@ -102,14 +110,16 @@ class Factory {
             return;
         }
         // console.time("batch crate");
-        const { duration } = this.option;
+
         const poolItems = el.querySelectorAll(".danmu-item.hide");
         const poolLength = poolItems.length;
 
-        const x = ((Date.now() - this.animatingTime) / duration) * this.WIDTH * 2;
-        // const { x: x2 } = get2DTranslate(el);
+        const { duration } = this.option;
+        const xValue = ((Date.now() - this.animatingTime) / (duration * 2)) * this.WIDTH * 2;
 
-        const leftValue = x;
+        // const { x: xValue } = get2DTranslate(el);
+
+        const leftValue = xValue;
 
         // 先利用资源池
         if (poolLength > 0) {
@@ -142,10 +152,10 @@ class Factory {
         const { duration } = this.option;
         const frame1: HTMLDivElement = document.createElement("div");
         frame1.className = "danmu-frame ";
-        frame1.style.animationDuration = duration + "ms";
+        frame1.style.animationDuration = duration * 2 + "ms";
         frame1.id = "frames_frame1";
         const frame2 = frame1.cloneNode() as HTMLDivElement;
-        frame2.style.animationDuration = duration + "ms";
+        frame2.style.animationDuration = duration * 2 + "ms";
         frame2.id = "frames_frame2";
 
         wrapper.appendChild(frame1);

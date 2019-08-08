@@ -11,7 +11,9 @@ const containerEl = document.getElementById("container");
 var manager: DanmuManager | null = null;
 manager = getManager(containerEl);
 (window as any).manager = manager;
-manager.init();
+manager.init({
+    duration: 8000
+});
 manager.start();
 let ticket = 0;
 function startBatch() {
@@ -23,9 +25,9 @@ function startBatch() {
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
             // "哦" + Math.random(),
             "666-8888888" + Math.random(),
-            "<span style='color:red'>真美</span"
+            "<span>真美</span"
         ]);
-    }, 40);
+    }, 35);
 }
 
 let isBigTest = false;
@@ -104,3 +106,20 @@ setInterval(function() {
         lbInView.innerHTML = inViewLen + "";
     });
 }, 5000);
+
+
+document.addEventListener("visibilitychange", function() {
+    // 用户离开了当前页面
+    if (document.visibilityState === "hidden") {
+        manager.stop();
+        console.log("stop....");
+        // console.log(document.getElementById("frames_frame1").getBoundingClientRect())
+    }
+
+    // 用户打开或回到页面
+    if (document.visibilityState === "visible") {
+        manager.start();
+        console.log("start....");
+        // console.log(document.getElementById("frames_frame1").getBoundingClientRect())
+    }
+});
