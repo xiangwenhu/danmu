@@ -1,16 +1,21 @@
-import { get2DTranslate } from "./util";
+import { measureElement, get2DTranslate } from "./util";
+import TraceManager from "./traceManager";
 
 export interface FactoryOption {
     reuse?: boolean;
     duration?: number;
     checkPeriod?: number;
+    useMeasure?: boolean;
 }
 
 const DEFAULT_OPTION = {
     reuse: false,
     duration: 10000,
-    checkPeriod: 1000
+    checkPeriod: 1000,
+    useMeasure: true
 };
+
+const DEFAULT_DANMU_CLASS = "danmu-item";
 
 class Factory {
     private wrapper: HTMLElement;
@@ -25,25 +30,40 @@ class Factory {
     private clearTicket: number;
     private pausedTime: number;
     public status: number;
+    private traceManager: TraceManager;
+    private baseMeasure: any;
 
     constructor(container: HTMLElement) {
         this.wrapper = container;
         this.sample = document.createElement("div");
-        this.sample.className = "danmu-item";
+        this.sample.className = DEFAULT_DANMU_CLASS;
         this.rect = this.wrapper.getBoundingClientRect();
         this.HEIGHT = this.wrapper.clientHeight;
         this.WIDTH = this.wrapper.clientWidth;
     }
 
+    getTraceHeight() {
+        this.baseMeasure = measureElement("div", DEFAULT_DANMU_CLASS, this.wrapper);
+        return this.baseMeasure.outerHeight + this.baseMeasure.height;
+    }
+
     init(option: FactoryOption = DEFAULT_OPTION) {
+        const { HEIGHT, WIDTH } = this;
         this.option = Object.assign(DEFAULT_OPTION, option);
         this.createFrames(this.wrapper);
         this.periodClear();
+        const traceHeight = this.getTraceHeight();
+        this.traceManager = new TraceManager({
+            height: HEIGHT,
+            width: WIDTH,
+            traceHeight,
+            layers: 2
+        });
     }
 
     start() {
         if (this.frame1.classList.contains("danmu-animation-1")) {
-            console.log("已经开始。。。。。。");
+            console.log("already started...");
             return;
         }
 
@@ -96,41 +116,53 @@ class Factory {
         this.status = 1;
     }
 
+    getCurrentX() {
+        const { duration } = this.option;
+        const x = ((Date.now() - this.animatingTime) / (duration * 2)) * this.WIDTH * 2;
+        // const { x } = get2DTranslate(el);
+        return x;
+    }
+
+    getElementLength(text) {
+        if (this.option.useMeasure) {
+            const { baseMeasure } = this;
+            return text.length * baseMeasure.letterWidth + baseMeasure.outerWidth;
+        }
+    }
+
+    getManagerLayerIndex(el: HTMLElement) {
+        if (el.id === this.frame1.id) {
+            return 0;
+        }
+        return 1;
+    }
+
     sendDanmu(queue: any[]) {
-        if (this.status !== 1) {
+        if (this.status !== 1 || queue.length <= 0) {
             return;
         }
 
-        const el = document.querySelector(".danmu-animation-1");
+        const el = document.querySelector(".danmu-animation-1") as HTMLDivElement;
         if (!el) {
             return;
         }
-
-        if (queue.length <= 0) {
-            return;
-        }
-        // console.time("batch crate");
-
+        const { traceManager } = this;
+        const managerLayerIndex = this.getManagerLayerIndex(el);
         const poolItems = el.querySelectorAll(".danmu-item.hide");
         const poolLength = poolItems.length;
-
-        const { duration } = this.option;
-        const xValue = ((Date.now() - this.animatingTime) / (duration * 2)) * this.WIDTH * 2;
-
-        // const { x: xValue } = get2DTranslate(el);
-
-        const leftValue = xValue;
-
+        const x = this.getCurrentX();
         // 先利用资源池
         if (poolLength > 0) {
             const realLength = Math.min(queue.length, poolLength);
             let newItem = null;
             for (let index = 0; index < realLength; index++) {
-                const { top, left } = this.getNewTopLeft(leftValue);
+                const text = poolItems[index];
+                const { index: traceIndex, y: top } = traceManager.get(x);
                 newItem = poolItems[index];
                 newItem.classList.remove("hide");
-                newItem.innerHTML = queue[index];
-                newItem.style.cssText = `left:${left}px;top:${top}px`;
+                newItem.innerHTML = text;
+                newItem.style.cssText = `left:${x}px;top:${top}px`;
+                traceManager.set(traceIndex, this.getElementLength(text));
             }
             queue.splice(0, realLength);
         }
@@ -139,13 +171,15 @@ class Factory {
         if (queue.length > 0) {
             const frament = document.createDocumentFragment();
             queue
-                .map(text => this.createDanmuItem(text, leftValue))
+                .map(text => {
+                    const { index: traceIndex, y: top } = traceManager.get(x);
+                    traceManager.set(traceIndex, this.getElementLength(text));
+                    return this.createDanmuItem(text, x, top);
+                })
                 .forEach(item => frament.appendChild(item));
             el.appendChild(frament);
             queue.splice(0);
         }
-
-        // console.timeEnd("batch crate");
     }
 
     createFrames(wrapper: HTMLElement) {
@@ -203,7 +237,7 @@ class Factory {
 
     getNewTopLeft(left: number, top?: number) {
         return {
-            top: top || ~~(Math.random() * this.HEIGHT),
+            top: top !== undefined ? top : ~~(Math.random() * this.HEIGHT),
             left
         };
     }

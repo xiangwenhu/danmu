@@ -1,4 +1,5 @@
 import getManager, { DanmuManager } from "./lib/index";
+import TraceManager from "./lib/trace";
 
 const videoEl = document.querySelector("video");
 let isPlayed = false;
@@ -25,9 +26,9 @@ function startBatch() {
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
             // "哦" + Math.random(),
             "666-8888888" + Math.random(),
-            "<span>真美</span"
+            // "<span>真美</span"
         ]);
-    }, 35);
+    }, 1000);
 }
 
 let isBigTest = false;
@@ -44,7 +45,7 @@ document.getElementById("btnPause").addEventListener("click", () => {
 });
 
 document.getElementById("btnContiue").addEventListener("click", () => {
-    if(isBigTest){
+    if (isBigTest) {
         startBatch();
     }
     manager.continue();
@@ -107,7 +108,6 @@ setInterval(function() {
     });
 }, 5000);
 
-
 document.addEventListener("visibilitychange", function() {
     // 用户离开了当前页面
     if (document.visibilityState === "hidden") {
@@ -123,3 +123,4 @@ document.addEventListener("visibilitychange", function() {
         // console.log(document.getElementById("frames_frame1").getBoundingClientRect())
     }
 });
+
