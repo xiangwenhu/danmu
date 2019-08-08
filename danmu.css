@@ -24,9 +24,9 @@
 
 .slide-danmu .danmu-item {
     position: absolute;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     display: inline-block;
-    border-radius: 2px;
+    /* border-radius: 2px; */
     padding: 3px 0 0;
     color: #fff;
     font-size: 22px;

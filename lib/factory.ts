@@ -12,7 +12,7 @@ const DEFAULT_OPTION = {
     reuse: false,
     duration: 10000,
     checkPeriod: 1000,
-    useMeasure: true
+    useMeasure: false
 };
 
 const DEFAULT_DANMU_CLASS = "danmu-item";
@@ -123,11 +123,12 @@ class Factory {
         return x;
     }
 
-    getElementLength(text) {
+    getElementLength(text, el: HTMLElement) {
         if (this.option.useMeasure) {
             const { baseMeasure } = this;
             return text.length * baseMeasure.letterWidth + baseMeasure.outerWidth;
         }
+        return el.getBoundingClientRect().width;
     }
 
     getManagerLayerIndex(el: HTMLElement) {
@@ -162,22 +163,24 @@ class Factory {
                 newItem.classList.remove("hide");
                 newItem.innerHTML = text;
                 newItem.style.cssText = `left:${x}px;top:${top}px`;
-                traceManager.set(traceIndex, this.getElementLength(text));
+                traceManager.set(traceIndex, this.getElementLength(text, newItem));
             }
             queue.splice(0, realLength);
         }
 
         // 然后创建新节点
         if (queue.length > 0) {
-            const frament = document.createDocumentFragment();
+            // const frament = document.createDocumentFragment();
             queue
                 .map(text => {
                     const { index: traceIndex, y: top } = traceManager.get(x);
-                    traceManager.set(traceIndex, this.getElementLength(text));
-                    return this.createDanmuItem(text, x, top);
+                    const newItem =  this.createDanmuItem(text, x, top);
+                    el.appendChild(newItem);
+                    traceManager.set(traceIndex, this.getElementLength(text, newItem));
+                    // return newItem;
                 })
-                .forEach(item => frament.appendChild(item));
-            el.appendChild(frament);
+               // .forEach(item => frament.appendChild(item));
+           // el.appendChild(frament);
             queue.splice(0);
         }
     }

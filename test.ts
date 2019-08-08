@@ -24,9 +24,9 @@ function startBatch() {
             "随机的弹幕哦随机的弹幕哦" +
                 Math.random(),
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
-            // "哦" + Math.random(),
+            "哦" + Math.random(),
             "666-8888888" + Math.random(),
-            // "<span>真美</span"
+            "<span>真美</span"
         ]);
     }, 1000);
 }
