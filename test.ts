@@ -21,7 +21,7 @@ function startBatch() {
     manager.sendDanmu(["随机的弹幕哦" + Math.random()]);
     ticket = setInterval(function() {
         manager.sendDanmu([
-            "<img height='100%' src='//img1.cache.jj.cn/myjj/my.cl/pc_live/m_resource/week5/1.png'>随机的弹幕哦随机的弹幕哦" +
+            "随机的弹幕哦随机的弹幕哦" +
                 Math.random(),
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
             // "哦" + Math.random(),
