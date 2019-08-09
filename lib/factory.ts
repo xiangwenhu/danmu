@@ -131,10 +131,15 @@ class Factory {
         return x;
     }
 
-    getElementLength(text, el: HTMLElement) {
-        if (this.option.useMeasure) {
+    getElementLength(item: DanmuItem, el: HTMLElement) {
+        const { useMeasure } = this.option;
+        const { forceDetect, content } = item;
+        if (forceDetect) {
+            return el.getBoundingClientRect().width;
+        }
+        if (useMeasure) {
             const { baseMeasure } = this;
-            return text.length * baseMeasure.letterWidth + baseMeasure.outerWidth;
+            return content.length * baseMeasure.letterWidth + baseMeasure.outerWidth;
         }
         return el.getBoundingClientRect().width;
     }
@@ -163,10 +168,10 @@ class Factory {
                 newItem.class = DEFAULT_DANMU_CLASS;
                 newItem.innerHTML = item.content;
                 newItem.style.cssText = `top:${top}px;left:${x}px;${item.style || ""}`;
-                if(item.className){
+                if (item.className) {
                     newItem.classList.add(item.className);
                 }
-                traceManager.set(traceIndex, this.getElementLength(item.content, newItem));
+                traceManager.set(traceIndex, this.getElementLength(item, newItem));
             }
             queue.splice(0, realLength);
         }
