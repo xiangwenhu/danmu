@@ -13,14 +13,14 @@ manager = getManager(containerEl);
 (window as any).manager = manager;
 manager.init({
     duration: 8000,
+    slideRatio: 3,
     useMeasure: true
 });
 manager.start();
 let ticket = 0;
 function startBatch() {
     manager.sendDanmu({
-        content: "你们都是坏人",
-        acceleration: 16000
+        content: "你们都是坏人"
     });
     manager.sendDanmu({
         content: "我是好人",
@@ -136,3 +136,39 @@ document.addEventListener("visibilitychange", function() {
         // console.log(document.getElementById("frames_frame1").getBoundingClientRect())
     }
 });
+
+document.addEventListener("fullscreenchange", () => {
+    console.log("fullscreenchange");
+});
+
+document.addEventListener("webkitfullscreenchange", () => {
+    const state = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
+    if(state){
+        goFull();
+        return;
+    }
+
+    quitFull();
+});
+
+function goFull() {
+    containerEl.style.width = document.documentElement.clientWidth + "px";
+    containerEl.style.height = document.documentElement.clientHeight + "px";
+    containerEl.style.backgroundColor = "red";
+    containerEl.style.opacity = "0.8";
+    containerEl.classList.add("fullScreen");
+    manager.resize({
+        duration: 10000
+    });
+    containerEl.webkitRequestFullScreen();
+}
+
+function quitFull() {
+    containerEl.style.width = "1349px";
+    containerEl.style.height = "758px";
+    containerEl.style.backgroundColor = "green";
+    containerEl.classList.remove("fullScreen");
+    manager.resize({
+        duration: 8000
+    });
+}

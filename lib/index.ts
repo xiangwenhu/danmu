@@ -55,6 +55,10 @@ export class DanmuManager {
     continue() {
         this.factory.continue();
     }
+
+    resize(option: FactoryOption){
+        this.factory.resize(option);
+    }    
 }
 
 function getDanmuManager(container: HTMLElement): DanmuManager {

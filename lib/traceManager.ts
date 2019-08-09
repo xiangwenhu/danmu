@@ -8,7 +8,6 @@ export interface TraceMangerOption {
     height: number;
     width: number;
     traceHeight: number;
-    strategy?: TraceStrategy
 }
 
 interface Trace {
@@ -20,8 +19,7 @@ class TraceManager {
     private option: TraceMangerOption;
     public traces: Trace[];
     constructor(option: TraceMangerOption) {
-        this.option = option;
-        this.createTraces();
+      this.reset(option);
     }
 
     get traceCount(){
@@ -42,8 +40,9 @@ class TraceManager {
         this.traces = traces;
     }
 
-    reset() {
-        this.traces.forEach(t => (t.tail = 0));
+    reset(option: TraceMangerOption) {
+        this.option = option;
+        this.createTraces();
     } 
 
     get() {

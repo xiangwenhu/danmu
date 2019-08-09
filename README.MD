@@ -11,21 +11,23 @@
 width 300%的时候，弹幕最长的长度为屏宽的50%    
 width 400%的时候，弹幕最长的长度为屏宽的100%    
 
-* [x] getComputedStyle   
+* [x] 不使用getComputedStyle   
 使用计时来控制
 
 
-* [ ] left采用百分比？
+* [x] 普通弹幕位置left采用百分比
+  * [ ] 自加速弹幕支持百分比？
 
-* [ ] 支持style和class
+* [x] 支持style和class
    
 * [ ] 节点回收改进
   * [ ] 标记length或者添加的时候记录长度
   * [ ] 标记复用节点次数
+  * [x] innerHTML=""
 
-* [ ] 弹幕最长长度可配置|可选
+* [x] 弹幕最长长度可配置|可选
 * [ ] resize
-* [ ] 弹幕自身有速度
+* [x] 弹幕自身有速度
 * [ ] 预创建弹幕节点   
     requestildecallback 
 

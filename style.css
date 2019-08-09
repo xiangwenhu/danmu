@@ -11,3 +11,18 @@ video {
     width: 1349px;
     height: 758px;
 }
+
+#container.fullScreen {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+}
+
+#container {
+    top: 15px;
+    left: 0px;
+    height: 758px;
+    width: 1349px;
+    background-color: red;
+    opacity: 0.5;
+}

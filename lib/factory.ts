@@ -16,16 +16,20 @@ export interface FactoryOption {
     duration?: number;
     checkPeriod?: number;
     useMeasure?: boolean;
+    slideRatio?: number;
+    usePercent?: boolean;
 }
 
 const DEFAULT_OPTION = {
     reuse: false,
     duration: 10000,
     checkPeriod: 1000,
-    useMeasure: false
+    useMeasure: false,
+    slideRatio: 4
 };
 
 const DEFAULT_DANMU_CLASS = "danmu-item";
+const MIN_SLIDE_LENGTH = 2.5;
 
 class Factory {
     private wrapper: HTMLElement;
@@ -70,6 +74,24 @@ class Factory {
         });
     }
 
+    resize(option: FactoryOption) {
+        this.rect = this.wrapper.getBoundingClientRect();
+        this.HEIGHT = this.wrapper.clientHeight;
+        this.WIDTH = this.wrapper.clientWidth;
+        const traceHeight = this.getTraceHeight();
+        this.traceManager.reset({
+            height: this.HEIGHT,
+            width: this.WIDTH,
+            traceHeight
+        });
+        this.frame2.style.animationDuration = option.duration * 2 + "ms";
+        this.frame1.style.animationDuration = option.duration * 2 + "ms";
+        // TODO:: 计算
+        this.animatingTime = Date.now();
+
+        this.option.duration = option.duration;
+    }
+
     start() {
         if (this.frame1.classList.contains("danmu-animation-1")) {
             console.log("already started...");
@@ -84,7 +106,7 @@ class Factory {
     stop() {
         this.status = 0;
         this.clearTicket && clearInterval(this.clearTicket);
-        this.traceManager.reset();
+
         if (this.frame1) {
             this.frame1.classList.remove("danmu-animation-1", "danmu-animation-2");
             this.frame1.innerHTML = "";
@@ -126,11 +148,11 @@ class Factory {
         this.status = 1;
     }
 
-    getCurrentX() {
-        const { duration } = this.option;
-        const x = ((Date.now() - this.animatingTime) / (duration * 2)) * this.WIDTH * 2;
-        // const { x } = get2DTranslate(el);
-        return x;
+    getCurrentX(el: HTMLElement) {
+        // const { duration } = this.option;
+        //const x = ((Date.now() - this.animatingTime) / (duration * 2)) * this.WIDTH * 2;
+        const { x } = get2DTranslate(el);
+        return -x;
     }
 
     getElementLength(item: DanmuItem, el: HTMLElement) {
@@ -147,13 +169,12 @@ class Factory {
     }
 
     getTraceInfo(item: DanmuItem) {
-
-        if(item.trace){
-            const index = Math.min(item.trace, this.traceManager.traceCount -1);
+        if (item.trace) {
+            const index = Math.min(item.trace, this.traceManager.traceCount - 1);
             return {
                 index,
-                y: this.traceManager.traces[index].y;
-            }
+                y: this.traceManager.traces[index].y
+            };
         }
 
         return this.traceManager.get();
@@ -171,7 +192,7 @@ class Factory {
         const { traceManager } = this;
         const poolItems = el.querySelectorAll(".danmu-item.hide");
         const poolLength = poolItems.length;
-        const x = this.getCurrentX();
+        const x = this.getCurrentX(el);
         // 先利用资源池
         if (poolLength > 0) {
             const realLength = Math.min(queue.length, poolLength);
@@ -216,7 +237,7 @@ class Factory {
     }
 
     createFrames(wrapper: HTMLElement) {
-        const { duration } = this.option;
+        const { duration, slideRatio } = this.option;
         const frame1: HTMLDivElement = document.createElement("div");
         frame1.className = "danmu-frame ";
         frame1.style.animationDuration = duration * 2 + "ms";
@@ -224,6 +245,12 @@ class Factory {
         const frame2 = frame1.cloneNode() as HTMLDivElement;
         frame2.style.animationDuration = duration * 2 + "ms";
         frame2.id = "frames_frame2";
+
+        if (slideRatio) {
+            const rate = Math.max(MIN_SLIDE_LENGTH, slideRatio);
+            frame1.style.width = `${rate * 100}%`;
+            frame2.style.width = `${rate * 100}%`;
+        }
 
         wrapper.appendChild(frame1);
         wrapper.appendChild(frame2);
@@ -244,7 +271,12 @@ class Factory {
         el = this.sample.cloneNode() as HTMLElement;
         el.innerHTML = item.content;
         el.dataset.tLength = item.content.length + "";
-        el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
+        if (this.option.usePercent) {
+            el.style.cssText = `top:${(t * 100) / this.HEIGHT}%;left:${(l * 100) /
+                (this.WIDTH * this.option.slideRatio)}%;${item.style || ""}`;
+        } else {
+            el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
+        }
         if (item.className) {
             el.classList.add(item.className);
         }
@@ -288,9 +320,9 @@ class Factory {
                     const b = rect.left + rect.width >= left && rect.left <= right;
                     return !b;
                 });
-            notInViewItems.forEach( (child:HTMLElement) => {
+            notInViewItems.forEach((child: HTMLElement) => {
                 child.style.cssText = "";
-                child.classList.add("hide")
+                child.classList.add("hide");
             });
             console.timeEnd("periodClear");
         }, checkPeriod);
@@ -305,9 +337,9 @@ class Factory {
 
     clearDanmus(el: HTMLDivElement) {
         if (this.option.reuse) {
-            el.querySelectorAll(".danmu-item:not(.hide)").forEach((child: HTMLElement) => {    
+            el.querySelectorAll(".danmu-item:not(.hide)").forEach((child: HTMLElement) => {
                 child.classList.add("hide");
-                if(child.style.transition){
+                if (child.style.transition) {
                     child.style.transition = null;
                     child.style.transform = null;
                 }
