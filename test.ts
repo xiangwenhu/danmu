@@ -22,17 +22,26 @@ function startBatch() {
         content: "你们都是坏人",
         acceleration: 16000
     });
+    manager.sendDanmu({
+        content: "我是好人",
+        style: "color:green; font-weight:700",
+        trace: 5,
+        acceleration: 16000
+    });
     ticket = setInterval(function() {
         manager.sendDanmu([
             { content: "随机的弹幕哦随机的弹幕哦" + Math.random(), style: "color:red" },
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
             "哦" + Math.random(),
             "1111-666666" + Math.random(),
-            "2222-7777777" + Math.random(),
-            "3333-8888888" + Math.random(),
-            // { content: "y真8Y美7", acceleration: 16000 }
+            // "33333-7777777" + Math.random(),
+            // "44444-8888888" + Math.random(),
+            // "55555-8888888" + Math.random(),
+            // "66666-8888888" + Math.random(),
+            // "77777-8888888" + Math.random(),
+            { content: "y真8Y美7", acceleration: 16000 }
         ]);
-    }, 500);
+    }, 1000);
 }
 
 let isBigTest = false;

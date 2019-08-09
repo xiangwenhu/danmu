@@ -18,11 +18,16 @@ interface Trace {
 
 class TraceManager {
     private option: TraceMangerOption;
-    private traces: Trace[];
+    public traces: Trace[];
     constructor(option: TraceMangerOption) {
         this.option = option;
         this.createTraces();
     }
+
+    get traceCount(){
+        return this.traces.length;
+    }
+   
 
     createTraces() {
         const traces = [];
@@ -39,9 +44,9 @@ class TraceManager {
 
     reset() {
         this.traces.forEach(t => (t.tail = 0));
-    }
+    } 
 
-    get(x: number) {
+    get() {
         const index = this.findTraceIndex();
         const trace = this.traces[index];
         return {

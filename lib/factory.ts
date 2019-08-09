@@ -8,6 +8,7 @@ export interface DanmuItem {
     className?: string;
     style?: string;
     acceleration?: number;
+    trace?: number;
 }
 
 export interface FactoryOption {
@@ -145,6 +146,19 @@ class Factory {
         return el.getBoundingClientRect().width;
     }
 
+    getTraceInfo(item: DanmuItem) {
+
+        if(item.trace){
+            const index = Math.min(item.trace, this.traceManager.traceCount -1);
+            return {
+                index,
+                y: this.traceManager.traces[index].y;
+            }
+        }
+
+        return this.traceManager.get();
+    }
+
     sendDanmu(queue: DanmuItem[]) {
         if (this.status !== 1 || queue.length <= 0) {
             return;
@@ -164,7 +178,7 @@ class Factory {
             let newItem = null;
             for (let index = 0; index < realLength; index++) {
                 const item = queue[index];
-                const { index: traceIndex, y: top } = traceManager.get(x);
+                const { index: traceIndex, y: top } = this.getTraceInfo(item);
                 newItem = poolItems[index] as HTMLDivElement;
                 newItem.class = DEFAULT_DANMU_CLASS;
                 newItem.innerHTML = item.content;
@@ -181,11 +195,15 @@ class Factory {
         if (queue.length > 0) {
             // const frament = document.createDocumentFragment();
             const newItems = queue.map(item => {
-                const { index: traceIndex, y: top } = traceManager.get(x);
+                const { index: traceIndex, y: top } = this.getTraceInfo(item);
                 const newItem = this.createDanmuItem(item, x, top);
+                if (item.acceleration) {
+                    newItem.style.transform = `translateX(0)`;
+                }
                 el.appendChild(newItem);
                 traceManager.set(traceIndex, this.getElementLength(item, newItem));
                 if (item.acceleration) {
+                    window.getComputedStyle(newItem).width;
                     newItem.style.transform = `translateX(-${this.WIDTH / 2}px)`;
                 }
                 return el;
@@ -270,7 +288,10 @@ class Factory {
                     const b = rect.left + rect.width >= left && rect.left <= right;
                     return !b;
                 });
-            notInViewItems.forEach(child => child.classList.add("hide"));
+            notInViewItems.forEach( (child:HTMLElement) => {
+                child.style.cssText = "";
+                child.classList.add("hide")
+            });
             console.timeEnd("periodClear");
         }, checkPeriod);
     }
@@ -284,9 +305,13 @@ class Factory {
 
     clearDanmus(el: HTMLDivElement) {
         if (this.option.reuse) {
-            el.querySelectorAll(".danmu-item:not(.hide)").forEach(child =>
-                child.classList.add("hide")
-            );
+            el.querySelectorAll(".danmu-item:not(.hide)").forEach((child: HTMLElement) => {    
+                child.classList.add("hide");
+                if(child.style.transition){
+                    child.style.transition = null;
+                    child.style.transform = null;
+                }
+            });
             return;
         }
         el.innerHTML = "";
