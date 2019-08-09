@@ -1,5 +1,4 @@
 import getManager, { DanmuManager } from "./lib/index";
-import TraceManager from "./lib/trace";
 
 const videoEl = document.querySelector("video");
 let isPlayed = false;
@@ -21,14 +20,13 @@ function startBatch() {
     manager.sendDanmu(["随机的弹幕哦" + Math.random()]);
     ticket = setInterval(function() {
         manager.sendDanmu([
-            "随机的弹幕哦随机的弹幕哦" +
-                Math.random(),
+            {content: "随机的弹幕哦随机的弹幕哦" +  Math.random(), style: "color:red"},
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
             "哦" + Math.random(),
             "666-8888888" + Math.random(),
-            "<span>真美</span"
+            "y真8Y美7"
         ]);
-    }, 1000);
+    }, 500);
 }
 
 let isBigTest = false;

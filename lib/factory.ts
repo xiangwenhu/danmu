@@ -1,6 +1,14 @@
 import { measureElement, get2DTranslate } from "./util";
 import TraceManager from "./traceManager";
 
+export interface DanmuItem {
+    content: string;
+    forceDetect?: boolean;
+    render?: Function;
+    className?: string;
+    style?: string;
+}
+
 export interface FactoryOption {
     reuse?: boolean;
     duration?: number;
@@ -56,8 +64,7 @@ class Factory {
         this.traceManager = new TraceManager({
             height: HEIGHT,
             width: WIDTH,
-            traceHeight,
-            layers: 2
+            traceHeight
         });
     }
 
@@ -75,6 +82,7 @@ class Factory {
     stop() {
         this.status = 0;
         this.clearTicket && clearInterval(this.clearTicket);
+        this.traceManager.reset();
         if (this.frame1) {
             this.frame1.classList.remove("danmu-animation-1", "danmu-animation-2");
             this.frame1.innerHTML = "";
@@ -131,14 +139,7 @@ class Factory {
         return el.getBoundingClientRect().width;
     }
 
-    getManagerLayerIndex(el: HTMLElement) {
-        if (el.id === this.frame1.id) {
-            return 0;
-        }
-        return 1;
-    }
-
-    sendDanmu(queue: any[]) {
+    sendDanmu(queue: DanmuItem[]) {
         if (this.status !== 1 || queue.length <= 0) {
             return;
         }
@@ -148,7 +149,6 @@ class Factory {
             return;
         }
         const { traceManager } = this;
-        const managerLayerIndex = this.getManagerLayerIndex(el);
         const poolItems = el.querySelectorAll(".danmu-item.hide");
         const poolLength = poolItems.length;
         const x = this.getCurrentX();
@@ -157,13 +157,16 @@ class Factory {
             const realLength = Math.min(queue.length, poolLength);
             let newItem = null;
             for (let index = 0; index < realLength; index++) {
-                const text = poolItems[index];
+                const item = queue[index];
                 const { index: traceIndex, y: top } = traceManager.get(x);
-                newItem = poolItems[index];
-                newItem.classList.remove("hide");
-                newItem.innerHTML = text;
-                newItem.style.cssText = `left:${x}px;top:${top}px`;
-                traceManager.set(traceIndex, this.getElementLength(text, newItem));
+                newItem = poolItems[index] as HTMLDivElement;
+                newItem.class = DEFAULT_DANMU_CLASS;
+                newItem.innerHTML = item.content;
+                newItem.style.cssText = `top:${top}px;left:${x}px;${item.style || ""}`;
+                if(item.className){
+                    newItem.classList.add(item.className);
+                }
+                traceManager.set(traceIndex, this.getElementLength(item.content, newItem));
             }
             queue.splice(0, realLength);
         }
@@ -171,16 +174,15 @@ class Factory {
         // 然后创建新节点
         if (queue.length > 0) {
             // const frament = document.createDocumentFragment();
-            queue
-                .map(text => {
-                    const { index: traceIndex, y: top } = traceManager.get(x);
-                    const newItem =  this.createDanmuItem(text, x, top);
-                    el.appendChild(newItem);
-                    traceManager.set(traceIndex, this.getElementLength(text, newItem));
-                    // return newItem;
-                })
-               // .forEach(item => frament.appendChild(item));
-           // el.appendChild(frament);
+            queue.map(item => {
+                const { index: traceIndex, y: top } = traceManager.get(x);
+                const newItem = this.createDanmuItem(item, x, top);
+                el.appendChild(newItem);
+                traceManager.set(traceIndex, this.getElementLength(item, newItem));
+                // return newItem;
+            });
+            // .forEach(item => frament.appendChild(item));
+            // el.appendChild(frament);
             queue.splice(0);
         }
     }
@@ -204,14 +206,16 @@ class Factory {
         this.resgisterAnimationEvents();
     }
 
-    createDanmuItem(text: string, left: number, top?: number) {
+    createDanmuItem(item: DanmuItem, left: number, top?: number) {
         const { top: t, left: l } = this.getNewTopLeft(left, top);
 
         const el = this.sample.cloneNode() as HTMLElement;
-        el.innerHTML = text;
-        el.dataset.tLength = text.length + "";
-        el.style.top = t + "px";
-        el.style.left = l + "px";
+        el.innerHTML = item.content;
+        el.dataset.tLength = item.content.length + "";
+        el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
+        if (item.className) {
+            el.classList.add(item.className);
+        }
         return el;
     }
 

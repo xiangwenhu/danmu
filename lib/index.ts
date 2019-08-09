@@ -1,5 +1,13 @@
-import Factory, { FactoryOption } from "./factory";
+import Factory, { FactoryOption, DanmuItem } from "./factory";
 import { enqueue, addListener, removeListener } from "./queue";
+
+
+
+type DanmuContent = string | DanmuItem;
+
+function toDanmuItem(danmu: string | DanmuItem): DanmuItem {
+    return typeof danmu === "string" ? { content: danmu } : danmu;
+}
 
 export class DanmuManager {
     private factory: Factory;
@@ -12,11 +20,17 @@ export class DanmuManager {
         this.factory.sendDanmu(data);
     }
 
-    sendDanmu(text: string | string[]) {
+    sendDanmu(danmu: DanmuContent[] | DanmuItem | string ) {
         if (this.factory.status !== 1) {
             return;
         }
-        const contents = Array.isArray(text) ? text : [text];
+        let contents: DanmuItem[] = null;
+        if (Array.isArray(danmu)) {
+            contents = danmu.map((d: DanmuItem | string) => toDanmuItem(d));
+        } else {
+            contents = [toDanmuItem(danmu)];
+        }
+
         enqueue(contents);
     }
 

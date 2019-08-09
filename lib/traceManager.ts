@@ -1,8 +1,14 @@
+export enum TraceStrategy {
+    radom = "random",
+    quque = "queque"
+}
+
+
 export interface TraceMangerOption {
     height: number;
     width: number;
     traceHeight: number;
-    layers: number;
+    strategy?: TraceStrategy
 }
 
 interface Trace {
