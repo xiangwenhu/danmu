@@ -14,7 +14,8 @@ manager = getManager(containerEl);
 manager.init({
     duration: 8000,
     slideRatio: 3,
-    useMeasure: true
+    useMeasure: true,
+    usePercent: true
 });
 manager.start();
 let ticket = 0;
@@ -34,14 +35,14 @@ function startBatch() {
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
             "哦" + Math.random(),
             "1111-666666" + Math.random(),
-            // "33333-7777777" + Math.random(),
-            // "44444-8888888" + Math.random(),
+            "33333-7777777" + Math.random(),
+            "44444-8888888" + Math.random(),
             // "55555-8888888" + Math.random(),
-            // "66666-8888888" + Math.random(),
+            // "66666-8888888" + Math.random()
             // "77777-8888888" + Math.random(),
-            { content: "y真8Y美7", acceleration: 16000 }
+            // { content: "y真8Y美7", acceleration: 16000 }
         ]);
-    }, 1000);
+    }, 80);
 }
 
 let isBigTest = false;
@@ -137,37 +138,38 @@ document.addEventListener("visibilitychange", function() {
     }
 });
 
-document.addEventListener("fullscreenchange", () => {
+document.addEventListener("fullscreenchange", function() {
     console.log("fullscreenchange");
-});
-
-document.addEventListener("webkitfullscreenchange", () => {
-    const state = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
-    if(state){
-        goFull();
-        return;
+    if (!document.fullscreenElement) {
+        quitFull();
     }
-
-    quitFull();
 });
+
+document.body.ondblclick = ev => {
+    ev.stopPropagation();
+    document.body.requestFullscreen().then(() => {
+        setTimeout(() => {
+            goFull();
+        }, 0);
+    });
+};
 
 function goFull() {
-    containerEl.style.width = document.documentElement.clientWidth + "px";
-    containerEl.style.height = document.documentElement.clientHeight + "px";
-    containerEl.style.backgroundColor = "red";
-    containerEl.style.opacity = "0.8";
     containerEl.classList.add("fullScreen");
+    videoEl.classList.add("fullScreen");
+    videoEl.setAttribute("webkit-playsinline", "");
+    videoEl.setAttribute("playsinline", "");
+
     manager.resize({
         duration: 10000
     });
-    containerEl.webkitRequestFullScreen();
 }
 
 function quitFull() {
     containerEl.style.width = "1349px";
     containerEl.style.height = "758px";
-    containerEl.style.backgroundColor = "green";
     containerEl.classList.remove("fullScreen");
+    videoEl.classList.remove("fullScreen");
     manager.resize({
         duration: 8000
     });

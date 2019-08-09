@@ -3,7 +3,6 @@ export enum TraceStrategy {
     quque = "queque"
 }
 
-
 export interface TraceMangerOption {
     height: number;
     width: number;
@@ -19,31 +18,38 @@ class TraceManager {
     private option: TraceMangerOption;
     public traces: Trace[];
     constructor(option: TraceMangerOption) {
-      this.reset(option);
+        this.traces = [];
+        this.reset(option);
     }
 
-    get traceCount(){
+    get traceCount() {
         return this.traces.length;
     }
-   
 
     createTraces() {
-        const traces = [];
+        const { traces } = this;
+
+        const index = this.findTraceIndex();
+        const baseValue = index >=0 ? traces[index].tail : 0;
+
         const { height, traceHeight } = this.option;
         const count = ~~(height / traceHeight);
         for (let i = 0; i < count; i++) {
-            traces.push({
-                tail: 0,
-                y: traceHeight * i
-            });
+            if (!this.traces[i]) {
+                traces.push({
+                    tail: baseValue,
+                    y: traceHeight * i
+                });
+            }
         }
+        traces.splice(count);
         this.traces = traces;
     }
 
     reset(option: TraceMangerOption) {
         this.option = option;
         this.createTraces();
-    } 
+    }
 
     get() {
         const index = this.findTraceIndex();

@@ -75,7 +75,9 @@ class Factory {
     }
 
     resize(option: FactoryOption) {
+        window.getComputedStyle(this.wrapper).height;
         this.rect = this.wrapper.getBoundingClientRect();
+        console.log( this.wrapper.clientHeight, this.wrapper.clientWidth);
         this.HEIGHT = this.wrapper.clientHeight;
         this.WIDTH = this.wrapper.clientWidth;
         const traceHeight = this.getTraceHeight();
@@ -272,8 +274,9 @@ class Factory {
         el.innerHTML = item.content;
         el.dataset.tLength = item.content.length + "";
         if (this.option.usePercent) {
-            el.style.cssText = `top:${(t * 100) / this.HEIGHT}%;left:${(l * 100) /
-                (this.WIDTH * this.option.slideRatio)}%;${item.style || ""}`;
+            el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
+            // el.style.cssText = `top:${(t * 100) / this.HEIGHT}%;left:${(l * 100) /
+            //     (this.WIDTH * this.option.slideRatio)}%;${item.style || ""}`;
         } else {
             el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
         }
