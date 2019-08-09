@@ -12,19 +12,25 @@ var manager: DanmuManager | null = null;
 manager = getManager(containerEl);
 (window as any).manager = manager;
 manager.init({
-    duration: 8000
+    duration: 8000,
+    useMeasure: true
 });
 manager.start();
 let ticket = 0;
 function startBatch() {
-    manager.sendDanmu(["随机的弹幕哦" + Math.random()]);
+    manager.sendDanmu({
+        content: "你们都是坏人",
+        acceleration: 16000
+    });
     ticket = setInterval(function() {
         manager.sendDanmu([
-            {content: "随机的弹幕哦随机的弹幕哦" +  Math.random(), style: "color:red"},
+            { content: "随机的弹幕哦随机的弹幕哦" + Math.random(), style: "color:red" },
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
             "哦" + Math.random(),
-            "666-8888888" + Math.random(),
-            "y真8Y美7"
+            "1111-666666" + Math.random(),
+            "2222-7777777" + Math.random(),
+            "3333-8888888" + Math.random(),
+            // { content: "y真8Y美7", acceleration: 16000 }
         ]);
     }, 500);
 }
@@ -121,4 +127,3 @@ document.addEventListener("visibilitychange", function() {
         // console.log(document.getElementById("frames_frame1").getBoundingClientRect())
     }
 });
-

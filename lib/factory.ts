@@ -2,11 +2,12 @@ import { measureElement, get2DTranslate } from "./util";
 import TraceManager from "./traceManager";
 
 export interface DanmuItem {
-    content: string;
+    content?: string;
     forceDetect?: boolean;
-    render?: Function;
+    render?: ((any) => HTMLElement) | HTMLElement | string;
     className?: string;
     style?: string;
+    acceleration?: number;
 }
 
 export interface FactoryOption {
@@ -133,8 +134,8 @@ class Factory {
 
     getElementLength(item: DanmuItem, el: HTMLElement) {
         const { useMeasure } = this.option;
-        const { forceDetect, content } = item;
-        if (forceDetect) {
+        const { forceDetect, render, content } = item;
+        if (forceDetect || render) {
             return el.getBoundingClientRect().width;
         }
         if (useMeasure) {
@@ -179,11 +180,15 @@ class Factory {
         // 然后创建新节点
         if (queue.length > 0) {
             // const frament = document.createDocumentFragment();
-            queue.map(item => {
+            const newItems = queue.map(item => {
                 const { index: traceIndex, y: top } = traceManager.get(x);
                 const newItem = this.createDanmuItem(item, x, top);
                 el.appendChild(newItem);
                 traceManager.set(traceIndex, this.getElementLength(item, newItem));
+                if (item.acceleration) {
+                    newItem.style.transform = `translateX(-${this.WIDTH / 2}px)`;
+                }
+                return el;
                 // return newItem;
             });
             // .forEach(item => frament.appendChild(item));
@@ -212,16 +217,39 @@ class Factory {
     }
 
     createDanmuItem(item: DanmuItem, left: number, top?: number) {
-        const { top: t, left: l } = this.getNewTopLeft(left, top);
+        let el = item.render && this.createDanmuWithRender(item, left, top);
+        if (el) {
+            return el;
+        }
 
-        const el = this.sample.cloneNode() as HTMLElement;
+        const { top: t, left: l } = this.getNewTopLeft(left, top);
+        el = this.sample.cloneNode() as HTMLElement;
         el.innerHTML = item.content;
         el.dataset.tLength = item.content.length + "";
         el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
         if (item.className) {
             el.classList.add(item.className);
         }
+        if (item.acceleration) {
+            el.style.transition = `transform ${item.acceleration}ms`;
+        }
         return el;
+    }
+
+    createDanmuWithRender(item: DanmuItem, left: number, top?: number) {
+        const data = { left, top, class: item.className, style: item.style };
+        if (typeof item.render === "function") {
+            return item.render(data);
+        } else if (typeof item.render === "object" && item.render instanceof HTMLElement) {
+            return item.render;
+        } else if (typeof item.render === "string") {
+            const { top: t, left: l } = this.getNewTopLeft(left, top);
+            const el = this.sample.cloneNode() as HTMLElement;
+            el.innerHTML = item.render;
+            el.style.cssText = `top:${t}px;left:${l}px;`;
+            return el;
+        }
+        return null;
     }
 
     periodClear() {
