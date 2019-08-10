@@ -18,37 +18,54 @@ manager.init({
 });
 manager.start();
 let ticket = 0;
+
+const pools = [
+    "完结撒花完结撒花完结撒花",
+    "25.5啥的也算一级",
+    "留下jo印留下jo印留下jo印",
+    "高价回收天堂之眼，不要问我为什么",
+    "麦姐在学院除了老大老二基本就是最厉害的了",
+    "日本不是牛顿管的好吗",
+    "好假炮姐当年1v3有一个5的和两个4的都打得过",
+    "这个女的好帅啊，一拳一个机器人的那个",
+    "哇喔哇喔哇喔哇喔好燃啊！！！",
+    "黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴",
+    "子弹是金属，枪也是金属，炮姐直接操控啊"
+];
+
+function getRandomIndex(len: number) {
+    return ~~(Math.random() * len);
+}
+
+function batchGet(count: number) {
+    const r = [];
+    const len = pools.length;
+    for (let i = 0; i < count; i++) {
+        r.push(pools[getRandomIndex(len)]);
+    }
+    return r;
+}
+
+const txtIntervalEl = document.getElementById("txtInterval") as HTMLInputElement;
+const txtBatchCount = document.getElementById("txtBatchCount") as HTMLInputElement;;
 function startBatch() {
-    manager.sendDanmu({
-        content: "你们都是坏人"
-    });
-    manager.sendDanmu({
-        content: "我是好人",
-        style: "color:green; font-weight:700",
-        trace: 5
-    });
+    const batchCount = +txtBatchCount.value;
+    manager.sendDanmu(batchGet(batchCount));
     ticket = setInterval(function() {
-        manager.sendDanmu([
-            { content: "随机的弹幕哦随机的弹幕哦" + Math.random(), style: "color:red" },
-            "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
-            // "哦" + Math.random(),
-            "1111-666666" + Math.random(),
-            "33333-7777777" + Math.random(),
-            // "44444-8888888" + Math.random(),
-            "55555-8888888" + Math.random(),
-            "66666-8888888" + Math.random(),
-            "77777-8888888" + Math.random(),
-            // { content: "y真8Y美7", acceleration: 16000 }
-        ]);
-    }, 600);
+        manager.sendDanmu(batchGet(batchCount));
+    }, +txtIntervalEl.value);
 }
 
 let isBigTest = false;
 const txtDanmuEl: HTMLInputElement = document.getElementById("txtDanmu") as HTMLInputElement;
-document.getElementById("btnSend").addEventListener("click", (ev) => {
-    manager.sendDanmu(txtDanmuEl.value);
-    ev.stopPropagation();
-}, false);
+document.getElementById("btnSend").addEventListener(
+    "click",
+    ev => {
+        manager.sendDanmu(txtDanmuEl.value);
+        ev.stopPropagation();
+    },
+    false
+);
 
 document.getElementById("btnPause").addEventListener("click", () => {
     if (isBigTest) {
@@ -141,17 +158,19 @@ document.addEventListener("fullscreenchange", function() {
     console.log("fullscreenchange");
     if (!document.fullscreenElement) {
         quitFull();
+        return;
     }
+    goFull();
 });
 
-document.body.ondblclick = ev => {
+document.getElementById("btnFull").addEventListener("click", ev => {
     ev.stopPropagation();
     document.body.requestFullscreen().then(() => {
         setTimeout(() => {
             goFull();
         }, 0);
     });
-};
+});
 
 function goFull() {
     containerEl.classList.add("fullScreen");

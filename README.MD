@@ -25,7 +25,7 @@ width 400%的时候，弹幕最长的长度为屏宽的100%
   * [x] innerHTML=""
 
 * [x] 弹幕最长长度可配置|可选
-* [ ] resize
+* [x] resize
 * [x] 弹幕自身有速度
 * [ ] 预创建弹幕节点   
     requestildecallback 

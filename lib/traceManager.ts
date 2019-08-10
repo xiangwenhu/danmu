@@ -87,7 +87,6 @@ class TraceManager {
     get() {
         const index = this.findTraceIndex();
         const trace = this.traces[index];
-        console.log("trace index:", index);
         return {
             index,
             y: trace.y
