@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel index.html",
-    "build": "parcel build index.html -d docs --public-url /docs"
+    "build": "parcel build index.html",
+    "build:github": "parcel build index.html -d docs --public-url /danmu"
   },
   "author": "",
   "license": "ISC",
