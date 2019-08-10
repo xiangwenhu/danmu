@@ -33,7 +33,6 @@ class CommonLayer extends Layer {
     private option: CommonLayerOption;
     private clearTicket: number;
     private pausedTime: number;
-    public status: number;
     private traceManager: TraceManager;
     private baseMeasure: any;
 
@@ -44,6 +43,7 @@ class CommonLayer extends Layer {
         this.rect = container.getBoundingClientRect();
         this.HEIGHT = container.clientHeight;
         this.WIDTH = container.clientWidth;
+        this.type = "common";
     }
 
     getTraceHeight() {
@@ -124,7 +124,7 @@ class CommonLayer extends Layer {
         }
         this.frame2.style.animationPlayState = "paused";
         this.pausedTime = Date.now();
-        this.status = 3;
+        this.status = 2;
     }
 
     continue() {

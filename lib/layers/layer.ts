@@ -2,6 +2,9 @@ import { DanmuItem } from "../index";
 
 export default abstract class Layer {
     protected container: HTMLElement;
+    protected status: number;
+    
+    public type = "common";
 
     constructor(container: HTMLElement) {
         this.container = container;

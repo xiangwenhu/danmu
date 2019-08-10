@@ -1,9 +1,9 @@
+import Layer from "./layers/layer";
 import CommonLayer, { CommonLayerOption } from "./layers/common";
 import { enqueue, addListener, removeListener } from "./queue";
 
-
 export interface DanmuItem {
-    type?: "common" | "fixed" | "acc",
+    type?: "common" | "fixed" | "acc";
     content?: string;
     forceDetect?: boolean;
     render?: ((any) => HTMLElement) | HTMLElement | string;
@@ -13,7 +13,6 @@ export interface DanmuItem {
     trace?: number;
 }
 
-
 type DanmuContent = string | DanmuItem;
 
 function toDanmuItem(danmu: string | DanmuItem): DanmuItem {
@@ -21,18 +20,23 @@ function toDanmuItem(danmu: string | DanmuItem): DanmuItem {
 }
 
 export class DanmuManager {
-    private commonLayer: CommonLayer;
+    private layers: Layer[] = [];
+    private status: 0 | 1 | 2; // 枚举？ 0: 停止  1 运行  2 暂停
     constructor(container: HTMLElement) {
-        this.commonLayer = new CommonLayer(container);
+        this.layers.push(new CommonLayer(container));
         this.batch = this.batch.bind(this);
     }
 
     private batch(data: DanmuItem[]) {
-        this.commonLayer.send(data);
+        // 改进批量
+        data.forEach(d => {
+            const layer = this.layers.find(l => l.type === d.type || "common");
+            layer.send([d]);
+        });
     }
 
-    sendDanmu(danmu: DanmuContent[] | DanmuItem | string ) {
-        if (this.commonLayer.status !== 1) {
+    sendDanmu(danmu: DanmuContent[] | DanmuItem | string) {
+        if (this.status !== 1) {
             return;
         }
         let contents: DanmuItem[] = null;
@@ -46,30 +50,48 @@ export class DanmuManager {
     }
 
     init(option?: CommonLayerOption) {
-        this.commonLayer.init(option);
+        this.layers.forEach(l => l.init(option));
     }
 
     start() {
-        this.commonLayer.start();
+        if (this.status === 1) {
+            return;
+        }
+        this.status = 1;
+        this.layers.forEach(l => l.start());
         addListener(this.batch);
     }
 
     stop() {
-        this.commonLayer.stop();
+        if (this.status !== 1) {
+            return;
+        }
+        this.status = 0;
+        this.layers.forEach(l => l.stop());
         removeListener(this.batch);
     }
 
     pause() {
-        this.commonLayer.pause();
+        if (this.status !== 1) {
+            return;
+        }
+        this.layers.forEach(l => l.stop());
     }
 
     continue() {
-        this.commonLayer.continue();
+        if (this.status !== 2) {
+            return;
+        }
+        this.layers.forEach(l => l.continue());
     }
 
-    resize(option: CommonLayerOption){
-        this.commonLayer.resize(option);
-    }    
+    resize(option: CommonLayerOption) {
+        this.layers.forEach(l => l.resize(option));
+    }
+
+    destory() {
+        this.layers.forEach(l => l.destroy());
+    }
 }
 
 function getDanmuManager(container: HTMLElement): DanmuManager {
