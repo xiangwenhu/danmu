@@ -19,12 +19,14 @@ class TraceManager {
     public traces: Trace[];
     private period: number;
     private xaxis: number;
+    private lastIndex: number;
     constructor(option: TraceMangerOption) {
         this.option = option;
         this.period = 0;
         this.traces = [];
         this.createTraces();
         this.xaxis = 0;
+        this.lastIndex = 0;
     }
 
     increasePeriod() {
@@ -85,8 +87,16 @@ class TraceManager {
     }
 
     get() {
-        const index = this.findTraceIndex();
-        const trace = this.traces[index];
+        let index = this.findTraceIndex();
+        let trace = this.traces[index];
+
+        // 两次相等，随机
+        if (index === this.lastIndex) {
+            index = ~~(Math.random() * this.traceCount);
+            trace = this.traces[index];
+        }
+        this.lastIndex = index;
+
         return {
             index,
             y: trace.y
@@ -95,7 +105,7 @@ class TraceManager {
 
     set(index: number, x: number, len: number) {
         const trace = this.traces[index];
-        trace.tail = this.xaxis + x + len;
+        trace.tail = this.xaxis + Math.max(x + len, trace.tail);
     }
 
     findTraceIndex() {

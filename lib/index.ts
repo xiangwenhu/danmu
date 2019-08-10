@@ -75,7 +75,7 @@ export class DanmuManager {
         if (this.status !== 1) {
             return;
         }
-        this.layers.forEach(l => l.stop());
+        this.layers.forEach(l => l.pause());
     }
 
     continue() {

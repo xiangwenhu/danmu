@@ -11,6 +11,7 @@
     position: absolute;
     left: 100%;
     will-change: transform;
+    opacity: 0.8;
 }
 
 .slide-danmu .danmu-frame:nth-child(1) {

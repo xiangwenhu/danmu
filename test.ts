@@ -34,8 +34,8 @@ const pools = [
             el.innerHTML = "麦姐在学院除了老大老二基本就是最厉害的了 from span";
             el.style.left = left + "px";
             el.style.top = top + "px";
-            el.style.zIndex = "999";
-            el.style.backgroundColor = "#666";
+            // el.style.zIndex = "999";
+            // el.style.backgroundColor = "#666";
             return el;
         }
     },

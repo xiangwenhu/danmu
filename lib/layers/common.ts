@@ -172,6 +172,10 @@ class CommonLayer extends Layer {
         return this.traceManager.get();
     }
 
+    setTraceInfo(traceIndex: number, x: number, len) {
+        this.traceManager.set(traceIndex, x, len);
+    }
+
     send(queue: DanmuItem[]) {
         if (this.status !== 1 || queue.length <= 0) {
             return;
@@ -199,7 +203,7 @@ class CommonLayer extends Layer {
                 if (item.className) {
                     newItem.classList.add(item.className);
                 }
-                traceManager.set(traceIndex, x, this.getElementLength(item, newItem));
+                this.setTraceInfo(traceIndex, x, this.getElementLength(item, newItem));
             }
             queue.splice(0, realLength);
         }
@@ -211,7 +215,7 @@ class CommonLayer extends Layer {
                 const { index: traceIndex, y: top } = this.getTraceInfo(item);
                 const newItem = this.createDanmuItem(item, x, top);
                 el.appendChild(newItem);
-                traceManager.set(traceIndex, x, this.getElementLength(item, newItem));
+                this.setTraceInfo(traceIndex, x, this.getElementLength(item, newItem));
                 return el;
                 // return newItem;
             });
@@ -383,7 +387,6 @@ class CommonLayer extends Layer {
             }
         });
     }
-
 }
 
 export default CommonLayer;
