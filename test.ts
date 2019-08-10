@@ -14,8 +14,7 @@ manager = getManager(containerEl);
 manager.init({
     duration: 8000,
     slideRatio: 3,
-    useMeasure: true,
-    usePercent: true
+    useMeasure: true
 });
 manager.start();
 let ticket = 0;
@@ -26,30 +25,30 @@ function startBatch() {
     manager.sendDanmu({
         content: "我是好人",
         style: "color:green; font-weight:700",
-        trace: 5,
-        acceleration: 16000
+        trace: 5
     });
     ticket = setInterval(function() {
         manager.sendDanmu([
             { content: "随机的弹幕哦随机的弹幕哦" + Math.random(), style: "color:red" },
             "随机的弹幕哦随机的弹幕哦随机的" + Math.random(),
-            "哦" + Math.random(),
+            // "哦" + Math.random(),
             "1111-666666" + Math.random(),
             "33333-7777777" + Math.random(),
-            "44444-8888888" + Math.random(),
-            // "55555-8888888" + Math.random(),
-            // "66666-8888888" + Math.random()
-            // "77777-8888888" + Math.random(),
+            // "44444-8888888" + Math.random(),
+            "55555-8888888" + Math.random(),
+            "66666-8888888" + Math.random(),
+            "77777-8888888" + Math.random(),
             // { content: "y真8Y美7", acceleration: 16000 }
         ]);
-    }, 80);
+    }, 600);
 }
 
 let isBigTest = false;
 const txtDanmuEl: HTMLInputElement = document.getElementById("txtDanmu") as HTMLInputElement;
-document.getElementById("btnSend").addEventListener("click", () => {
+document.getElementById("btnSend").addEventListener("click", (ev) => {
     manager.sendDanmu(txtDanmuEl.value);
-});
+    ev.stopPropagation();
+}, false);
 
 document.getElementById("btnPause").addEventListener("click", () => {
     if (isBigTest) {

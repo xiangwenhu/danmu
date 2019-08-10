@@ -1,15 +1,6 @@
 import { measureElement, get2DTranslate } from "./util";
 import TraceManager from "./traceManager";
-
-export interface DanmuItem {
-    content?: string;
-    forceDetect?: boolean;
-    render?: ((any) => HTMLElement) | HTMLElement | string;
-    className?: string;
-    style?: string;
-    acceleration?: number;
-    trace?: number;
-}
+import { DanmuItem } from "./index";
 
 export interface FactoryOption {
     reuse?: boolean;
@@ -17,7 +8,6 @@ export interface FactoryOption {
     checkPeriod?: number;
     useMeasure?: boolean;
     slideRatio?: number;
-    usePercent?: boolean;
 }
 
 const DEFAULT_OPTION = {
@@ -65,11 +55,11 @@ class Factory {
         const { HEIGHT, WIDTH } = this;
         this.option = Object.assign(DEFAULT_OPTION, option);
         this.createFrames(this.wrapper);
-        this.periodClear();
+        this.recycle();
         const traceHeight = this.getTraceHeight();
         this.traceManager = new TraceManager({
             height: HEIGHT,
-            width: WIDTH,
+            width: (WIDTH * this.option.slideRatio) / 2,
             traceHeight
         });
     }
@@ -77,13 +67,13 @@ class Factory {
     resize(option: FactoryOption) {
         window.getComputedStyle(this.wrapper).height;
         this.rect = this.wrapper.getBoundingClientRect();
-        console.log( this.wrapper.clientHeight, this.wrapper.clientWidth);
+        console.log(this.wrapper.clientHeight, this.wrapper.clientWidth);
         this.HEIGHT = this.wrapper.clientHeight;
         this.WIDTH = this.wrapper.clientWidth;
         const traceHeight = this.getTraceHeight();
-        this.traceManager.reset({
+        this.traceManager.resize({
             height: this.HEIGHT,
-            width: this.WIDTH,
+            width: (this.WIDTH * this.option.slideRatio) / 2,
             traceHeight
         });
         this.frame2.style.animationDuration = option.duration * 2 + "ms";
@@ -103,6 +93,7 @@ class Factory {
         this.frame1.classList.add("danmu-animation-1");
         this.animatingTime = Date.now();
         this.status = 1;
+        this.traceManager.reset();
     }
 
     stop() {
@@ -160,14 +151,13 @@ class Factory {
     getElementLength(item: DanmuItem, el: HTMLElement) {
         const { useMeasure } = this.option;
         const { forceDetect, render, content } = item;
-        if (forceDetect || render) {
+        if (!useMeasure || forceDetect || render) {
             return el.getBoundingClientRect().width;
         }
         if (useMeasure) {
             const { baseMeasure } = this;
             return content.length * baseMeasure.letterWidth + baseMeasure.outerWidth;
         }
-        return el.getBoundingClientRect().width;
     }
 
     getTraceInfo(item: DanmuItem) {
@@ -209,7 +199,7 @@ class Factory {
                 if (item.className) {
                     newItem.classList.add(item.className);
                 }
-                traceManager.set(traceIndex, this.getElementLength(item, newItem));
+                traceManager.set(traceIndex, x, this.getElementLength(item, newItem));
             }
             queue.splice(0, realLength);
         }
@@ -220,15 +210,8 @@ class Factory {
             const newItems = queue.map(item => {
                 const { index: traceIndex, y: top } = this.getTraceInfo(item);
                 const newItem = this.createDanmuItem(item, x, top);
-                if (item.acceleration) {
-                    newItem.style.transform = `translateX(0)`;
-                }
                 el.appendChild(newItem);
-                traceManager.set(traceIndex, this.getElementLength(item, newItem));
-                if (item.acceleration) {
-                    window.getComputedStyle(newItem).width;
-                    newItem.style.transform = `translateX(-${this.WIDTH / 2}px)`;
-                }
+                traceManager.set(traceIndex, x, this.getElementLength(item, newItem));
                 return el;
                 // return newItem;
             });
@@ -273,18 +256,9 @@ class Factory {
         el = this.sample.cloneNode() as HTMLElement;
         el.innerHTML = item.content;
         el.dataset.tLength = item.content.length + "";
-        if (this.option.usePercent) {
-            el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
-            // el.style.cssText = `top:${(t * 100) / this.HEIGHT}%;left:${(l * 100) /
-            //     (this.WIDTH * this.option.slideRatio)}%;${item.style || ""}`;
-        } else {
-            el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
-        }
+        el.style.cssText = `top:${t}px;left:${l}px;${item.style || ""}`;
         if (item.className) {
             el.classList.add(item.className);
-        }
-        if (item.acceleration) {
-            el.style.transition = `transform ${item.acceleration}ms`;
         }
         return el;
     }
@@ -305,7 +279,7 @@ class Factory {
         return null;
     }
 
-    periodClear() {
+    recycle() {
         const { checkPeriod } = this.option;
         this.clearTicket = setInterval(() => {
             const frame = document.querySelector(".danmu-animation-2");
@@ -314,10 +288,10 @@ class Factory {
             }
             const { left, width } = this.rect;
             const right = left + width;
-            console.time("periodClear");
+            console.time("recycle");
             const allItems = frame.querySelectorAll(".danmu-item:not(.hide)");
             const notInViewItems = Array.from(allItems)
-                .slice(0, 200)
+                .slice(0, 120)
                 .filter(function(item) {
                     const rect = item.getBoundingClientRect();
                     const b = rect.left + rect.width >= left && rect.left <= right;
@@ -327,7 +301,7 @@ class Factory {
                 child.style.cssText = "";
                 child.classList.add("hide");
             });
-            console.timeEnd("periodClear");
+            console.timeEnd("recycle");
         }, checkPeriod);
     }
 
@@ -364,6 +338,7 @@ class Factory {
 
                     frame1.style.zIndex = "11";
                     frame2.style.zIndex = "10";
+                    this.traceManager.increasePeriod();
                     break;
                 case "animation-stage-2":
                     this.clearDanmus(frame1);
@@ -384,6 +359,7 @@ class Factory {
 
                     frame2.style.zIndex = "11";
                     frame1.style.zIndex = "10";
+                    this.traceManager.increasePeriod();
                     break;
                 case "animation-stage-2":
                     this.clearDanmus(frame2);

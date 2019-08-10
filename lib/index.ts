@@ -1,6 +1,17 @@
-import Factory, { FactoryOption, DanmuItem } from "./factory";
+import Factory, { FactoryOption} from "./factory";
 import { enqueue, addListener, removeListener } from "./queue";
 
+
+export interface DanmuItem {
+    type?: "common" | "fixed" | "acc",
+    content?: string;
+    forceDetect?: boolean;
+    render?: ((any) => HTMLElement) | HTMLElement | string;
+    className?: string;
+    style?: string;
+    acceleration?: number;
+    trace?: number;
+}
 
 
 type DanmuContent = string | DanmuItem;

@@ -17,9 +17,19 @@ interface Trace {
 class TraceManager {
     private option: TraceMangerOption;
     public traces: Trace[];
+    private period: number;
+    private xaxis: number;
     constructor(option: TraceMangerOption) {
+        this.option = option;
+        this.period = 0;
         this.traces = [];
-        this.reset(option);
+        this.createTraces();
+        this.xaxis = 0;
+    }
+
+    increasePeriod() {
+        this.period++;
+        this.xaxis += this.option.width;
     }
 
     get traceCount() {
@@ -27,46 +37,69 @@ class TraceManager {
     }
 
     createTraces() {
-        const { traces } = this;
-
-        const index = this.findTraceIndex();
-        const baseValue = index >=0 ? traces[index].tail : 0;
+        const traces = [];
 
         const { height, traceHeight } = this.option;
         const count = ~~(height / traceHeight);
         for (let i = 0; i < count; i++) {
-            if (!this.traces[i]) {
-                traces.push({
-                    tail: baseValue,
-                    y: traceHeight * i
-                });
-            }
+            traces.push({
+                tail: 0,
+                y: traceHeight * i
+            });
         }
-        traces.splice(count);
         this.traces = traces;
     }
 
-    reset(option: TraceMangerOption) {
-        this.option = option;
+    reset() {
+        this.period = 0;
+        this.traces = [];
         this.createTraces();
+        this.xaxis = 0;
+    }
+
+    resize(option: TraceMangerOption) {
+        this.option = option;
+        const { traces } = this;
+        const oldTraceCount = traces.length;
+        const { height, traceHeight } = this.option;
+        const count = ~~(height / traceHeight);
+
+        if (count === oldTraceCount) {
+            return;
+        }
+
+        if (count < oldTraceCount) {
+            traces.splice(count);
+            return;
+        }
+
+        const index = this.findTraceIndex();
+        const baseValue = index >= 0 ? traces[index].tail : 0;
+
+        for (let i = oldTraceCount - 1; i < count; i++) {
+            traces.push({
+                tail: baseValue,
+                y: traceHeight * i
+            });
+        }
     }
 
     get() {
         const index = this.findTraceIndex();
         const trace = this.traces[index];
+        console.log("trace index:", index);
         return {
             index,
             y: trace.y
         };
     }
 
-    set(index: number, len: number) {
+    set(index: number, x: number, len: number) {
         const trace = this.traces[index];
-        trace.tail += len;
+        trace.tail = this.xaxis + x + len;
     }
 
     findTraceIndex() {
-        // x 暂时未使用
         const tv = this.traces.map(t => t.tail);
         const min = Math.min(...tv);
         const index = this.traces.findIndex(t => t.tail === min);
