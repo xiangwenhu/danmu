@@ -266,17 +266,30 @@ class Factory {
     createDanmuWithRender(item: DanmuItem, left: number, top?: number) {
         const data = { left, top, class: item.className, style: item.style };
         if (typeof item.render === "function") {
-            return item.render(data);
+            const el = item.render(data);
+            if (el instanceof HTMLElement) {
+                if(!el.classList.contains(DEFAULT_DANMU_CLASS)){
+                    el.classList.add(DEFAULT_DANMU_CLASS);
+                }
+                return el;
+            }
+            if (typeof el === "string") {
+                return this.wrapperHTMLStringDanmu(left, top, item.render);
+            }
         } else if (typeof item.render === "object" && item.render instanceof HTMLElement) {
             return item.render;
         } else if (typeof item.render === "string") {
-            const { top: t, left: l } = this.getNewTopLeft(left, top);
-            const el = this.sample.cloneNode() as HTMLElement;
-            el.innerHTML = item.render;
-            el.style.cssText = `top:${t}px;left:${l}px;`;
-            return el;
+            return this.wrapperHTMLStringDanmu(left, top, item.render);
         }
         return null;
+    }
+
+    wrapperHTMLStringDanmu(left, top, content) {
+        const { top: t, left: l } = this.getNewTopLeft(left, top);
+        const el = this.sample.cloneNode() as HTMLElement;
+        el.innerHTML = content;
+        el.style.cssText = `top:${t}px;left:${l}px;`;
+        return el;
     }
 
     recycle() {

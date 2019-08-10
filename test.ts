@@ -20,17 +20,29 @@ manager.start();
 let ticket = 0;
 
 const pools = [
-    "完结撒花完结撒花完结撒花",
-    "25.5啥的也算一级",
-    "留下jo印留下jo印留下jo印",
-    "高价回收天堂之眼，不要问我为什么",
-    "麦姐在学院除了老大老二基本就是最厉害的了",
-    "日本不是牛顿管的好吗",
-    "好假炮姐当年1v3有一个5的和两个4的都打得过",
-    "这个女的好帅啊，一拳一个机器人的那个",
-    "哇喔哇喔哇喔哇喔好燃啊！！！",
-    "黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴",
-    "子弹是金属，枪也是金属，炮姐直接操控啊"
+    // { content: "完结撒花完结撒花完结撒花", style: "color:Red" },
+    // { content: "25.5啥的也算一级", style: "color:green" },
+    // {
+    //     forceDetect: true,
+    //     content:
+    //         "<img src='//static.hdslb.com/images/member/noface.gif' style='height:20px;vertical-align: middle;'>留下jo印留下jo印留下jo印"
+    // },
+    // { render: "高价回收天堂之眼，不要问我为什么" },
+    {
+        render: ({ left, top }) => {
+            const el = document.createElement("span");
+            el.innerHTML = "麦姐在学院除了老大老二基本就是最厉害的了 from span";
+            el.style.left = left + "px";
+            el.style.top = top + "px";
+            return el;
+        }
+    }
+    // "日本不是牛顿管的好吗",
+    // "好假炮姐当年1v3有一个5的和两个4的都打得过",
+    // "这个女的好帅啊，一拳一个机器人的那个",
+    // "哇喔哇喔哇喔哇喔好燃啊！！！",
+    // "黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴",
+    // { content: "子弹是金属，枪也是金属，炮姐直接操控啊", style: "border:solid 1px blue" }
 ];
 
 function getRandomIndex(len: number) {
@@ -47,7 +59,7 @@ function batchGet(count: number) {
 }
 
 const txtIntervalEl = document.getElementById("txtInterval") as HTMLInputElement;
-const txtBatchCount = document.getElementById("txtBatchCount") as HTMLInputElement;;
+const txtBatchCount = document.getElementById("txtBatchCount") as HTMLInputElement;
 function startBatch() {
     const batchCount = +txtBatchCount.value;
     manager.sendDanmu(batchGet(batchCount));
