@@ -30,6 +30,8 @@ width 400%的时候，弹幕最长的长度为屏宽的100%
 * [ ] 预创建弹幕节点   
     requestildecallback 
 
+* [ ] destroy
+
 * [ ] 快速弹幕
 * [ ] 固定弹幕
 

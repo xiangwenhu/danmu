@@ -1,4 +1,4 @@
-import Factory, { FactoryOption} from "./factory";
+import CommonLayer, { CommonLayerOption } from "./layers/common";
 import { enqueue, addListener, removeListener } from "./queue";
 
 
@@ -21,18 +21,18 @@ function toDanmuItem(danmu: string | DanmuItem): DanmuItem {
 }
 
 export class DanmuManager {
-    private factory: Factory;
+    private commonLayer: CommonLayer;
     constructor(container: HTMLElement) {
-        this.factory = new Factory(container);
+        this.commonLayer = new CommonLayer(container);
         this.batch = this.batch.bind(this);
     }
 
-    private batch(data: any[]) {
-        this.factory.sendDanmu(data);
+    private batch(data: DanmuItem[]) {
+        this.commonLayer.send(data);
     }
 
     sendDanmu(danmu: DanmuContent[] | DanmuItem | string ) {
-        if (this.factory.status !== 1) {
+        if (this.commonLayer.status !== 1) {
             return;
         }
         let contents: DanmuItem[] = null;
@@ -45,30 +45,30 @@ export class DanmuManager {
         enqueue(contents);
     }
 
-    init(option?: FactoryOption) {
-        this.factory.init(option);
+    init(option?: CommonLayerOption) {
+        this.commonLayer.init(option);
     }
 
     start() {
-        this.factory.start();
+        this.commonLayer.start();
         addListener(this.batch);
     }
 
     stop() {
-        this.factory.stop();
+        this.commonLayer.stop();
         removeListener(this.batch);
     }
 
     pause() {
-        this.factory.pause();
+        this.commonLayer.pause();
     }
 
     continue() {
-        this.factory.continue();
+        this.commonLayer.continue();
     }
 
-    resize(option: FactoryOption){
-        this.factory.resize(option);
+    resize(option: CommonLayerOption){
+        this.commonLayer.resize(option);
     }    
 }
 

@@ -1,8 +1,9 @@
-import { measureElement, get2DTranslate } from "./util";
-import TraceManager from "./traceManager";
-import { DanmuItem } from "./index";
+import { measureElement, get2DTranslate } from "../util";
+import Layer from "./layer";
+import TraceManager from "../traceManager";
+import { DanmuItem } from "../index";
 
-export interface FactoryOption {
+export interface CommonLayerOption {
     reuse?: boolean;
     duration?: number;
     checkPeriod?: number;
@@ -21,8 +22,7 @@ const DEFAULT_OPTION = {
 const DEFAULT_DANMU_CLASS = "danmu-item";
 const MIN_SLIDE_LENGTH = 2.5;
 
-class Factory {
-    private wrapper: HTMLElement;
+class CommonLayer extends Layer {
     private frame1: HTMLDivElement;
     private frame2: HTMLDivElement;
     private sample: HTMLDivElement;
@@ -30,7 +30,7 @@ class Factory {
     private WIDTH: number;
     private animatingTime: number;
     private rect: ClientRect;
-    private option: FactoryOption;
+    private option: CommonLayerOption;
     private clearTicket: number;
     private pausedTime: number;
     public status: number;
@@ -38,23 +38,23 @@ class Factory {
     private baseMeasure: any;
 
     constructor(container: HTMLElement) {
-        this.wrapper = container;
+        super(container);
         this.sample = document.createElement("div");
         this.sample.className = DEFAULT_DANMU_CLASS;
-        this.rect = this.wrapper.getBoundingClientRect();
-        this.HEIGHT = this.wrapper.clientHeight;
-        this.WIDTH = this.wrapper.clientWidth;
+        this.rect = container.getBoundingClientRect();
+        this.HEIGHT = container.clientHeight;
+        this.WIDTH = container.clientWidth;
     }
 
     getTraceHeight() {
-        this.baseMeasure = measureElement("div", DEFAULT_DANMU_CLASS, this.wrapper);
+        this.baseMeasure = measureElement("div", DEFAULT_DANMU_CLASS, this.container);
         return this.baseMeasure.outerHeight + this.baseMeasure.height;
     }
 
-    init(option: FactoryOption = DEFAULT_OPTION) {
+    init(option: CommonLayerOption = DEFAULT_OPTION) {
         const { HEIGHT, WIDTH } = this;
         this.option = Object.assign(DEFAULT_OPTION, option);
-        this.createFrames(this.wrapper);
+        this.createFrames(this.container);
         this.recycle();
         const traceHeight = this.getTraceHeight();
         this.traceManager = new TraceManager({
@@ -64,12 +64,12 @@ class Factory {
         });
     }
 
-    resize(option: FactoryOption) {
-        window.getComputedStyle(this.wrapper).height;
-        this.rect = this.wrapper.getBoundingClientRect();
-        console.log(this.wrapper.clientHeight, this.wrapper.clientWidth);
-        this.HEIGHT = this.wrapper.clientHeight;
-        this.WIDTH = this.wrapper.clientWidth;
+    resize(option: CommonLayerOption) {
+        const { container } = this;
+        window.getComputedStyle(container).height;
+        this.rect = container.getBoundingClientRect();
+        this.HEIGHT = container.clientHeight;
+        this.WIDTH = container.clientWidth;
         const traceHeight = this.getTraceHeight();
         this.traceManager.resize({
             height: this.HEIGHT,
@@ -172,7 +172,7 @@ class Factory {
         return this.traceManager.get();
     }
 
-    sendDanmu(queue: DanmuItem[]) {
+    send(queue: DanmuItem[]) {
         if (this.status !== 1 || queue.length <= 0) {
             return;
         }
@@ -268,7 +268,7 @@ class Factory {
         if (typeof item.render === "function") {
             const el = item.render(data);
             if (el instanceof HTMLElement) {
-                if(!el.classList.contains(DEFAULT_DANMU_CLASS)){
+                if (!el.classList.contains(DEFAULT_DANMU_CLASS)) {
                     el.classList.add(DEFAULT_DANMU_CLASS);
                 }
                 return el;
@@ -383,6 +383,7 @@ class Factory {
             }
         });
     }
+
 }
 
-export default Factory;
+export default CommonLayer;
