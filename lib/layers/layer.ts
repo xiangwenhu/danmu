@@ -1,9 +1,12 @@
 import { DanmuItem } from "../index";
+import { ElementRect } from "../types";
+import { measureElement } from "../util";
 
 export default abstract class Layer {
     protected container: HTMLElement;
     protected status: number;
-    
+    protected baseMeasure: ElementRect;
+
     public type = "common";
 
     constructor(container: HTMLElement) {
@@ -26,12 +29,17 @@ export default abstract class Layer {
 
     abstract send(items: DanmuItem[]): void;
 
-    remove(itemId: string | number){  
+    getTraceHeight(className, tagName: string = "div") {
+        this.baseMeasure = measureElement(tagName, className, this.container);
+        return this.baseMeasure.outerHeight + this.baseMeasure.height;
+    }
+
+    remove(itemId: string | number) {
         const el = this.container.querySelector(`[danmu-id='${itemId}']`);
-        if(el){
+        if (el) {
             el.parentNode.removeChild(el);
         }
-    };
+    }
 
     destroy() {
         this.container = null;

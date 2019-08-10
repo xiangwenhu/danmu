@@ -20,7 +20,7 @@ manager.start();
 let ticket = 0;
 
 const pools = [
-    { content: "完结撒花完结撒花完结撒花", style: "color:Red" },
+    { content: "完结撒花完结撒花完结撒花", style: "color:Red", type: "acc" },
     { content: "25.5啥的也算一级", style: "color:green" },
     {
         forceDetect: true,

@@ -7,11 +7,19 @@
 .slide-danmu .danmu-frame {
     contain: layout;
     height: 100%;
-    width: 400%;
     position: absolute;
-    left: 100%;
     will-change: transform;
     opacity: 0.8;
+}
+
+.slide-danmu .danmu-frame-common{
+    width: 400%;
+    left: 100%;
+}
+
+.slide-danmu .danmu-frame-acc{
+   width: 100%;
+   z-index: 21;
 }
 
 .slide-danmu .danmu-frame:nth-child(1) {
@@ -42,6 +50,15 @@
     user-select: none;
 }
 
+.slide-danmu .danmu-item-acc{
+    animation: animation-acc  10s linear 0ms;
+    animation-fill-mode: forwards;
+    will-change: transform;
+    display: block;
+    width: 100%;
+    left: 100%;
+}
+
 .slide-danmu .danmu-animation-1 {
     animation: animation-stage-1 40s linear 0ms;
     animation-fill-mode: forwards;
@@ -67,6 +84,15 @@
     }
     to {
         transform: translate3d(-100%, 0, 0);
+    }
+}
+
+@keyframes animation-acc {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-200%, 0, 0);
     }
 }
 

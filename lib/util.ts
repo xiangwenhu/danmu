@@ -1,3 +1,4 @@
+import { ElementRect } from "./types";
 const { getComputedStyle } = window;
 
 export function pxToNumer(v: string) {
@@ -28,7 +29,16 @@ export function get2DTranslate(el) {
     };
 }
 
-export function measureElement(tag: string, className: string, parent: HTMLElement = document.body) {
+export function getTranslateX(el: HTMLElement) {   
+    const { x } = get2DTranslate(el);
+    return -x;
+}
+
+export function measureElement(
+    tag: string,
+    className: string,
+    parent: HTMLElement = document.body
+): ElementRect {
     const el = document.createElement(tag);
     el.className = className;
     // 考虑letter Space

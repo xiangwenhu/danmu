@@ -1,5 +1,6 @@
 import Layer from "./layers/layer";
 import CommonLayer, { CommonLayerOption } from "./layers/common";
+import AccLayer from "./layers/acc"
 import { enqueue, addListener, removeListener } from "./queue";
 
 export interface DanmuItem {
@@ -11,6 +12,7 @@ export interface DanmuItem {
     style?: string;
     acceleration?: number;
     trace?: number;
+    duration?: number;
 }
 
 type DanmuContent = string | DanmuItem;
@@ -24,13 +26,14 @@ export class DanmuManager {
     private status: 0 | 1 | 2; // 枚举？ 0: 停止  1 运行  2 暂停
     constructor(container: HTMLElement) {
         this.layers.push(new CommonLayer(container));
+        this.layers.push(new AccLayer(container));
         this.batch = this.batch.bind(this);
     }
 
     private batch(data: DanmuItem[]) {
         // 改进批量
         data.forEach(d => {
-            const layer = this.layers.find(l => l.type === d.type || "common");
+            const layer = this.layers.find(l => l.type === (d.type || "common"));
             layer.send([d]);
         });
     }

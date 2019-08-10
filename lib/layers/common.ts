@@ -34,7 +34,6 @@ class CommonLayer extends Layer {
     private clearTicket: number;
     private pausedTime: number;
     private traceManager: TraceManager;
-    private baseMeasure: any;
 
     constructor(container: HTMLElement) {
         super(container);
@@ -44,19 +43,14 @@ class CommonLayer extends Layer {
         this.HEIGHT = container.clientHeight;
         this.WIDTH = container.clientWidth;
         this.type = "common";
-    }
-
-    getTraceHeight() {
-        this.baseMeasure = measureElement("div", DEFAULT_DANMU_CLASS, this.container);
-        return this.baseMeasure.outerHeight + this.baseMeasure.height;
-    }
+    } 
 
     init(option: CommonLayerOption = DEFAULT_OPTION) {
         const { HEIGHT, WIDTH } = this;
         this.option = Object.assign(DEFAULT_OPTION, option);
         this.createFrames(this.container);
         this.recycle();
-        const traceHeight = this.getTraceHeight();
+        const traceHeight = this.getTraceHeight(DEFAULT_DANMU_CLASS);
         this.traceManager = new TraceManager({
             height: HEIGHT,
             width: (WIDTH * this.option.slideRatio) / 2,
@@ -70,7 +64,7 @@ class CommonLayer extends Layer {
         this.rect = container.getBoundingClientRect();
         this.HEIGHT = container.clientHeight;
         this.WIDTH = container.clientWidth;
-        const traceHeight = this.getTraceHeight();
+        const traceHeight = this.getTraceHeight(DEFAULT_DANMU_CLASS);
         this.traceManager.resize({
             height: this.HEIGHT,
             width: (this.WIDTH * this.option.slideRatio) / 2,
@@ -185,7 +179,6 @@ class CommonLayer extends Layer {
         if (!el) {
             return;
         }
-        const { traceManager } = this;
         const poolItems = el.querySelectorAll(".danmu-item.hide");
         const poolLength = poolItems.length;
         const x = this.getCurrentX(el);
@@ -228,7 +221,7 @@ class CommonLayer extends Layer {
     createFrames(wrapper: HTMLElement) {
         const { duration, slideRatio } = this.option;
         const frame1: HTMLDivElement = document.createElement("div");
-        frame1.className = "danmu-frame ";
+        frame1.className = "danmu-frame danmu-frame-common";
         frame1.style.animationDuration = duration * 2 + "ms";
         frame1.id = "frames_frame1";
         const frame2 = frame1.cloneNode() as HTMLDivElement;
