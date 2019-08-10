@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel index.html",
     "build": "parcel build index.html",
-    "build:github": "parcel build index.html -d docs --public-url /danmu"
+    "build:github": "parcel build index.html -d docs --public-url ./"
   },
   "author": "",
   "license": "ISC",
