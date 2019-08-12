@@ -298,7 +298,7 @@ class CommonLayer extends Layer {
             }
             const { left, width } = this.rect;
             const right = left + width;
-            console.time("recycle");
+            // console.time("recycle");
             const allItems = frame.querySelectorAll(".danmu-item:not(.hide)");
             const notInViewItems = Array.from(allItems)
                 .slice(0, 120)
@@ -311,7 +311,7 @@ class CommonLayer extends Layer {
                 child.style.cssText = "";
                 child.classList.add("hide");
             });
-            console.timeEnd("recycle");
+            // console.timeEnd("recycle");
         }, checkPeriod);
     }
 

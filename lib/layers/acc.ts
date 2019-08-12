@@ -22,7 +22,7 @@ const DEFAULT_OPTION = {
 const DEFAULT_DANMU_CLASS = "danmu-item danmu-item-acc";
 const DEFUALT_DURATION = 10000;
 
-class CommonLayer extends Layer {
+class AccLayer extends Layer {
     private frame: HTMLDivElement;
     private sample: HTMLDivElement;
     private HEIGHT: number;

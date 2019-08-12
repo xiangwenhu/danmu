@@ -55,4 +55,18 @@ width 400%的时候，弹幕最长的长度为屏宽的100%
 *  ~~transition~~
 
 加速弹幕
-* StyleSheet 
+* ~~StyleSheet~~: 性能低下
+```js
+            this.styleSheet.insertRule(`
+                @keyframes animation-acc-${id} {
+                    from {
+                        transform: translate3d(0, 0, 0);
+                    }
+                    to {
+                        transform: translate3d(-${this.WIDTH + len}px, 0, 0);
+                    }
+                }
+            `, this.styleSheet.rules.length);
+``` 
+* CSS Scope / Style Scope
+  
