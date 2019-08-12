@@ -77,8 +77,9 @@ export class DanmuManager {
     pause() {
         if (this.status !== 1) {
             return;
-        }
+        }    
         this.layers.forEach(l => l.pause());
+        this.status = 2
     }
 
     continue() {
@@ -86,6 +87,7 @@ export class DanmuManager {
             return;
         }
         this.layers.forEach(l => l.continue());
+        this.status = 1;
     }
 
     resize(option: CommonLayerOption) {

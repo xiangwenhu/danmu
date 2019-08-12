@@ -51,7 +51,7 @@
 }
 
 .slide-danmu .danmu-item-acc{
-    animation: animation-acc  10s linear 0ms;
+    animation: animation-acc 10s linear 0ms;
     animation-fill-mode: forwards;
     will-change: transform;
     display: block;

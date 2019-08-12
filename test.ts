@@ -21,14 +21,16 @@ let ticket = 0;
 
 const pools = [
     { content: "完结撒花完结撒花完结撒花", style: "color:Red", type: "acc" },
-    { content: "25.5啥的也算一级", style: "color:green" },
+    { content: "25.5啥的也算一级", style: "color:green" ,type: "acc"},
     {
         forceDetect: true,
+        type: "acc",
         content:
             "<img src='//static.hdslb.com/images/member/noface.gif' style='height:20px;vertical-align: middle;'>留下jo印留下jo印留下jo印"
     },
-    { render: "高价回收天堂之眼，不要问我为什么" },
+    {ype: "acc", render: "高价回收天堂之眼，不要问我为什么" },
     {
+        type: "acc",
         render: ({ left, top }) => {
             const el = document.createElement("span");
             el.innerHTML = "麦姐在学院除了老大老二基本就是最厉害的了 from span";
@@ -49,7 +51,7 @@ const pools = [
     "这个女的好帅啊，一拳一个机器人的那个",
     "哇喔哇喔哇喔哇喔好燃啊！！！",
     "黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴黑琴",
-    { content: "子弹是金属，枪也是金属，炮姐直接操控啊", style: "border:solid 1px blue" }
+    { content: "子弹是金属，枪也是金属，炮姐直接操控啊", style: "border:solid 1px blue" ,type: "acc",}
 ];
 
 function getRandomIndex(len: number) {

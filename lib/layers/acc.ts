@@ -81,15 +81,15 @@ class CommonLayer extends Layer {
     }
 
     pause() {
-        this.container
-            .querySelectorAll(">.danmu-item-acc")
+        this.frame
+            .querySelectorAll(".danmu-item-acc")
             .forEach((el: HTMLElement) => (el.style.animationPlayState = "paused"));
         this.status = 2;
     }
 
     continue() {
-        this.container
-            .querySelectorAll(">.danmu-item-acc")
+        this.frame
+            .querySelectorAll(".danmu-item-acc")
             .forEach((el: HTMLElement) => (el.style.animationPlayState = "running"));
         this.status = 1;
     }
@@ -112,7 +112,7 @@ class CommonLayer extends Layer {
     }
 
     setTraceInfo(traceIndex: number, x: number, len) {
-        this.traceManager.set(traceIndex, x, len);
+        // this.traceManager.set(traceIndex, x, len);
     }
 
     send(queue: DanmuItem[]) {
@@ -124,6 +124,7 @@ class CommonLayer extends Layer {
         const newItems = queue.map(item => {
             const { index: traceIndex, y: top } = this.getTraceInfo(item);
             const newItem = this.createDanmuItem(item, 0, top);
+            newItem.style.animationDuration = (item.duration || DEFUALT_DURATION) + "ms";
             frame.appendChild(newItem);
             this.setTraceInfo(traceIndex, 0, this.getElementLength(item, newItem));
             return newItem;
@@ -177,13 +178,16 @@ class CommonLayer extends Layer {
     }
 
     createDanmuWithRender(item: DanmuItem, left: number, top?: number) {
-        const data = { left, top, class: item.className, style: item.style };
+        const data = { left: '100%', top, class: item.className, style: item.style };
         if (typeof item.render === "function") {
             const el = item.render(data);
             if (el instanceof HTMLElement) {
-                if (!el.classList.contains(DEFAULT_DANMU_CLASS)) {
-                    el.classList.add(DEFAULT_DANMU_CLASS);
-                }
+                DEFAULT_DANMU_CLASS.split(" ").forEach(cn => {
+                    if (!el.classList.contains(DEFAULT_DANMU_CLASS)) {
+                        el.classList.add(cn);
+                    }
+                });
+
                 return el;
             }
             if (typeof el === "string") {
@@ -226,8 +230,8 @@ class CommonLayer extends Layer {
     resgisterAnimationEvents() {
         // 可以标记，之后批量删除
         this.frame.addEventListener("animationend", (ev: AnimationEvent) => {
-          const el = ev.target as HTMLElement;
-          el.parentElement.removeChild(el);
+            const el = ev.target as HTMLElement;
+            el.parentElement.removeChild(el);
         });
     }
 }
