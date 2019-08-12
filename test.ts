@@ -30,7 +30,6 @@ const pools = [
     },
     { ype: "acc", render: "高价回收天堂之眼，不要问我为什么" },
     {
-        type: "acc",
         render: ({ left, top }) => {
             const el = document.createElement("span");
             el.innerHTML = "麦姐在学院除了老大老二基本就是最厉害的了 from span";
@@ -149,15 +148,20 @@ const right = left + width;
 setInterval(function() {
     (window as any).requestIdleCallback(() => {
         const allItems = Array.from(document.querySelectorAll(".danmu-item"));
+
+        const commonItems = Array.from(
+            document.querySelectorAll(".danmu-item:not(.danmu-item-acc)")
+        );
+        const accCount = document.querySelectorAll(".danmu-item-acc").length;
         const len = allItems.length;
         const inHideLen = allItems.filter(item => item.classList.contains("hide")).length;
-        const inViewLen = allItems.filter(function(item) {
+        const inViewLen = commonItems.filter(function(item) {
             const rect = item.getBoundingClientRect();
             const b = !item.classList.contains("hide") && rect.left + rect.width >= left;
             return b;
         }).length;
 
-        lbTotal.innerText = len + "";
+        lbTotal.innerText = len + "-" + accCount;
         lbHide.innerHTML = inHideLen + "";
         lbInView.innerHTML = inViewLen + "";
     });
