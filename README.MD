@@ -41,3 +41,18 @@ width 400%的时候，弹幕最长的长度为屏宽的100%
     需要记录每条轨道最后的tail，现在存在问题    
     需要 x + len, 这需要Factory记录走过的屏数
 * [ ] 引入shedule概念
+
+
+
+
+## 尝试
+
+普通弹幕
+* ~~三个frame走~~
+* * [x]  getComputedStyle获取当前位移
+*  ~~iframe作为容器~~
+*  ~~translate代替弹幕元素的left,top~~
+*  ~~transition~~
+
+加速弹幕
+* StyleSheet 
