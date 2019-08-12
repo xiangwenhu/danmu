@@ -236,4 +236,4 @@ class AccLayer extends Layer {
     }
 }
 
-export default CommonLayer;
+export default AccLayer;
