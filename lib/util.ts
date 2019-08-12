@@ -43,7 +43,7 @@ export function measureElement(
     el.className = className;
     // 考虑letter Space
     el.innerHTML = "啊啊";
-    el.style.cssText = "position:absolute; visibility:hidden";
+    el.style.cssText = "position:absolute; visibility:hidden;display:inline-block;width:auto";
     parent.appendChild(el);
 
     const cstyle = getComputedStyle(el);

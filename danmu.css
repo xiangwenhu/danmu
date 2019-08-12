@@ -51,11 +51,13 @@
 }
 
 .slide-danmu .danmu-item-acc{
-    animation: animation-acc 10s linear 0ms;
+    /* animation-name: animation-acc; */
+    animation-duration:10s;
+    animation-timing-function: linear;
+    animation-delay: 0ms;
     animation-fill-mode: forwards;
     will-change: transform;
-    display: block;
-    width: 100%;
+    /* width: 100%; */
     left: 100%;
 }
 
@@ -96,6 +98,111 @@
     }
 }
 
+@keyframes animation-acc-110 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-110%, 0, 0);
+    }
+}
+
+@keyframes animation-acc-120 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-120%, 0, 0);
+    }
+}
+
+
+@keyframes animation-acc-130 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-130%, 0, 0);
+    }
+}
+
+@keyframes animation-acc-140 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-140%, 0, 0);
+    }
+}
+
+@keyframes animation-acc-150 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-150%, 0, 0);
+    }
+}
+
+@keyframes animation-acc-160 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-160%, 0, 0);
+    }
+}
+
+@keyframes animation-acc-170 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-170%, 0, 0);
+    }
+}
+
+@keyframes animation-acc-180 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-180%, 0, 0);
+    }
+}
+
+@keyframes animation-acc-190 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-190%, 0, 0);
+    }
+}
+
+@keyframes animation-acc-200 {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-200%, 0, 0);
+    }
+}
+
 .slide-danmu .hide {
     display: none;
 }
+
+
+.inline-block{
+    display: inline-block;
+}
+
+.block{
+    display: block;
+}
+
+.fullWidth{
+    width: 100%;
+}
+

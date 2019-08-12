@@ -31,6 +31,7 @@ class AccLayer extends Layer {
     private option: AccLayerOption;
     private clearTicket: number;
     private traceManager: TraceManager;
+    private recycleQueue: HTMLElement[];
 
     constructor(container: HTMLElement) {
         super(container);
@@ -53,6 +54,7 @@ class AccLayer extends Layer {
             width: (WIDTH * this.option.slideRatio) / 2,
             traceHeight
         });
+        this.recycleQueue = [];
     }
 
     resize(option: AccLayerOption) {
@@ -77,7 +79,9 @@ class AccLayer extends Layer {
 
     stop() {
         this.status = 0;
+        this.frame.innerHTML = "";
         this.clearTicket && clearInterval(this.clearTicket);
+        this.recycleQueue = [];
     }
 
     pause() {
@@ -126,16 +130,24 @@ class AccLayer extends Layer {
             const newItem = this.createDanmuItem(item, "100%", top);
             newItem.style.animationDuration = (item.duration || DEFUALT_DURATION) + "ms";
             frame.appendChild(newItem);
-            this.setTraceInfo(traceIndex, 0, this.getElementLength(item, newItem));
+            const len = this.getElementLength(item, newItem);
+            const animationName = this.getAnimationName(len);
+            newItem.style.animationName = animationName;
+            newItem.classList.add("block", "fullWidth");
+            this.setTraceInfo(traceIndex, 0, len);
             return newItem;
         });
 
         // window.getComputedStyle(this.frame).height;
         // newItems.forEach((el, index)=>{
-        //     const duration = queue[index].duration || DEFUALT_DURATION;
-        //     el.style.transition = `transform ${duration}ms linear`;
-        //     el.style.transform = `translate3d(-${WIDTH}px,0,0)`;
+        //     el.classList.add();
         // })
+    }
+
+    getAnimationName(len: number) {
+        const percent = +Math.ceil((len * 10) / this.WIDTH).toFixed(1) * 10;
+        const totalPercent = 100 + percent;
+        return "animation-acc-" + totalPercent;
     }
 
     getElementLength(item: DanmuItem, el: HTMLElement) {
@@ -213,6 +225,20 @@ class AccLayer extends Layer {
         return true;
     }
 
+    pushQueue(el: HTMLElement) {
+        this.recycleQueue.push(el);
+        if (this.recycleQueue.length > 40) {
+            const len = this.recycleQueue.length;
+            for (let i = 0; i < len; i++) {
+                const el = this.recycleQueue[i];
+                if (el.isConnected) {
+                    this.frame.removeChild(el);
+                }
+            }
+            this.recycleQueue.splice(0);
+        }
+    }
+
     clearDanmus(el: HTMLDivElement) {
         if (this.option.reuse) {
             el.querySelectorAll(".danmu-item:not(.hide)").forEach((child: HTMLElement) => {
@@ -231,7 +257,7 @@ class AccLayer extends Layer {
         // 可以标记，之后批量删除
         this.frame.addEventListener("animationend", (ev: AnimationEvent) => {
             const el = ev.target as HTMLElement;
-            el.parentElement.removeChild(el);
+            this.pushQueue(el);
         });
     }
 }

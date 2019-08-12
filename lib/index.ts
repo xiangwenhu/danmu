@@ -33,7 +33,7 @@ export class DanmuManager {
     private batch(data: DanmuItem[]) {
         // 改进批量
         data.forEach(d => {
-            const layer = this.layers.find(l => l.type === (d.type || "acc"));
+            const layer = this.layers.find(l => l.type === (d.type || "common"));
             layer.send([d]);
         });
     }
@@ -60,18 +60,18 @@ export class DanmuManager {
         if (this.status === 1) {
             return;
         }
-        this.status = 1;
         this.layers.forEach(l => l.start());
         addListener(this.batch);
+        this.status = 1;
     }
 
     stop() {
         if (this.status !== 1) {
             return;
         }
-        this.status = 0;
         this.layers.forEach(l => l.stop());
         removeListener(this.batch);
+        this.status = 0;
     }
 
     pause() {
