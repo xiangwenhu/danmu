@@ -33,7 +33,7 @@ export class DanmuManager {
     private batch(data: DanmuItem[]) {
         // 改进批量
         data.forEach(d => {
-            const layer = this.layers.find(l => l.type === (d.type || "common"));
+            const layer = this.layers.find(l => l.type === (d.type || "acc"));
             layer.send([d]);
         });
     }

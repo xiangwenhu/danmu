@@ -20,7 +20,7 @@ const DEFAULT_OPTION = {
 };
 
 const DEFAULT_DANMU_CLASS = "danmu-item danmu-item-acc";
-const DEFUALT_DURATION = 5000;
+const DEFUALT_DURATION = 10000;
 
 class CommonLayer extends Layer {
     private frame: HTMLDivElement;
@@ -123,7 +123,7 @@ class CommonLayer extends Layer {
 
         const newItems = queue.map(item => {
             const { index: traceIndex, y: top } = this.getTraceInfo(item);
-            const newItem = this.createDanmuItem(item, 0, top);
+            const newItem = this.createDanmuItem(item, "100%", top);
             newItem.style.animationDuration = (item.duration || DEFUALT_DURATION) + "ms";
             frame.appendChild(newItem);
             this.setTraceInfo(traceIndex, 0, this.getElementLength(item, newItem));
@@ -160,7 +160,7 @@ class CommonLayer extends Layer {
         this.resgisterAnimationEvents();
     }
 
-    createDanmuItem(item: DanmuItem, left: number, top?: number) {
+    createDanmuItem(item: DanmuItem, left: number | string, top?: number) {
         let el = item.render && this.createDanmuWithRender(item, left, top);
         if (el) {
             return el;
@@ -177,8 +177,8 @@ class CommonLayer extends Layer {
         return el;
     }
 
-    createDanmuWithRender(item: DanmuItem, left: number, top?: number) {
-        const data = { left: '100%', top, class: item.className, style: item.style };
+    createDanmuWithRender(item: DanmuItem, left: number | string, top?: number) {
+        const data = { left, top, class: item.className, style: item.style };
         if (typeof item.render === "function") {
             const el = item.render(data);
             if (el instanceof HTMLElement) {
@@ -191,12 +191,12 @@ class CommonLayer extends Layer {
                 return el;
             }
             if (typeof el === "string") {
-                return this.wrapperHTMLStringDanmu(left, top, item.render);
+                return this.wrapperHTMLStringDanmu(left, top + "px", item.render);
             }
         } else if (typeof item.render === "object" && item.render instanceof HTMLElement) {
             return item.render;
         } else if (typeof item.render === "string") {
-            return this.wrapperHTMLStringDanmu(left, top, item.render);
+            return this.wrapperHTMLStringDanmu(left, top + "px", item.render);
         }
         return null;
     }
@@ -205,7 +205,7 @@ class CommonLayer extends Layer {
         top = top || ~~(Math.random() * this.HEIGHT);
         const el = this.sample.cloneNode() as HTMLElement;
         el.innerHTML = content;
-        el.style.cssText = `top:${left}px;left:${top}px;`;
+        el.style.cssText = `top:${top};left:${left}`;
         return el;
     }
 
