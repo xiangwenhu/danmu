@@ -14,6 +14,7 @@ export function enqueue(data: any[]) {
 function clear() {
     if (requestId) {
         cancelAnimationFrame(requestId);
+        requestId = null;
     }
 }
 
@@ -31,8 +32,8 @@ export function addListener(cb: (data: any[]) => void) {
 }
 
 export function removeListener(cb: Function) {
-    const index = callBacks.find(c => c === cb);
-    if (index > 0) {
+    const index = callBacks.findIndex(c => c === cb);
+    if (index >= 0) {
         callBacks.splice(index, 1);
     }
     if (callBacks.length <= 0) {
